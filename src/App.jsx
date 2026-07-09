@@ -72,8 +72,8 @@ const ticketCards = [
     official: official[0][1],
     tag: 'Book first',
     zhTag: '最優先',
-    key: '$1 service fee. 30 day tickets release 10:00 AM ET. Day before tickets release 3:00 PM ET. Walk up tickets begin 8:45 AM at Washington Monument Lodge when available.',
-    zh: '免費票，線上每張收 $1 手續費。30 天前票 10:00 AM ET 釋出，前一日票 3:00 PM ET 釋出。若有現場票，8:45 AM 起在 Washington Monument Lodge 發放。',
+    key: '$1 service fee. Day before tickets release at 3:00 PM ET. Walk up tickets begin at 8:45 AM at Washington Monument Lodge when available.',
+    zh: '免費票，線上每張收 $1 手續費。前一日票 3:00 PM ET 釋出。若有現場票，8:45 AM 起在 Washington Monument Lodge 發放。',
     see: ['500 ft view', '490 ft museum', 'Interior stones', 'Reflecting Pool axis'],
     avoid: 'No restroom, water, food, or storage inside. Travel light.',
     avoidZh: '內部沒有洗手間、飲水、餐飲或置物服務。小包最穩。',
@@ -98,8 +98,8 @@ const ticketCards = [
     official: official[2][1],
     tag: 'Timed pass',
     zhTag: '需要時段票',
-    key: 'Tickets are free. Advance tickets are available 30 days out. Same day tickets release online at 9:00 AM ET.',
-    zh: '免費票。30 天前可預約，當日票每日 9:00 AM ET 線上釋出。',
+    key: 'Tickets are free. Same day tickets release online at 9:00 AM ET. Check the time slot before going to Capitol Hill.',
+    zh: '免費票。當日票每日 9:00 AM ET 線上釋出。前往 Capitol Hill 前先確認時段。',
     see: ['Great Hall', 'Main Reading Room', 'Jefferson Library', 'Current exhibitions', 'Library Store'],
     avoid: 'Enter from First Street SE at ground or driveway level, not the top of the staircase.',
     avoidZh: '入口在 First Street SE 的 ground 或 driveway level，不是大階梯頂端。',
@@ -663,8 +663,8 @@ function DCSpotsInfrastructure() {
       <JumpNav />
 
       <section className="priorityStrip" aria-label="Quick rules">
-        <div><b>10:00</b><span>Monument 30 day release</span><small>華盛頓紀念碑 30 天前票</small></div>
-        <div><b>3:00</b><span>Monument day before</span><small>前一日票</small></div>
+        <div><b>3:00</b><span>Monument next day pass</span><small>華盛頓紀念碑前一日票</small></div>
+        <div><b>8:45</b><span>Monument walk up</span><small>現場票先到先得</small></div>
         <div><b>9:00</b><span>LOC same day</span><small>國會圖書館當日票</small></div>
         <div><b>PM</b><span>Fair or waterfront</span><small>晚上排 Fair 或水岸</small></div>
       </section>
@@ -730,8 +730,8 @@ const css = `
 :root {
   --bg: #FCFAF2;
   --ink: #24211D;
-  --muted: #4C453D;
-  --soft: #6B6258;
+  --muted: #332E28;
+  --soft: #3F3A34;
   --line: #E7D9C3;
   --card: #FFFDF8;
   --paper: #F7F0E3;
@@ -803,7 +803,7 @@ button { font: inherit; }
 .label {
   margin: 0 0 10px;
   color: var(--red);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
   font-weight: 800;
@@ -907,8 +907,9 @@ h1 {
 
 .jumpNav small {
   display: block;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   margin-top: 2px;
+  font-weight: 720;
 }
 
 .priorityStrip {
@@ -1027,8 +1028,8 @@ h1 {
   transform: translateY(-50%);
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(88, 178, 220, 0.2), rgba(217, 166, 46, 0.22), rgba(88, 178, 220, 0.16));
-  color: rgba(36, 33, 29, 0.45);
-  font-size: 0.76rem;
+  color: rgba(36, 33, 29, 0.72);
+  font-size: 0.82rem;
   font-weight: 850;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -1315,7 +1316,7 @@ summary {
   background: var(--paper);
   border: 1px solid var(--line);
   color: var(--muted);
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   font-weight: 850;
 }
 
@@ -1415,7 +1416,7 @@ summary {
 }
 
 @media (max-width: 420px) {
-  .heroBadges span, .chips span, .outLink, .filterRow button { font-size: 0.88rem; }
+  .heroBadges span, .chips span, .outLink, .filterRow button { font-size: 0.92rem; }
   .tight, .zhLine, .simpleCard p, .visualCard p, .foodCard p, .rulesGrid p, details p { font-size: 0.98rem; }
 }
 `;
