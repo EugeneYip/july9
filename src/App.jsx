@@ -346,9 +346,11 @@ const exactLinks = [
 
 const mapZones = [
   {
-    area: 'NW river',
+    no: '01',
+    area: 'Georgetown',
     zh: '西北水岸',
     tone: 'green',
+    route: 'M Street, C&O Canal, Waterfront Park, Water Taxi',
     places: [
       ['Georgetown', maps.georgetown],
       ['M Street and C&O Canal', maps.mStreetCanal],
@@ -357,33 +359,40 @@ const mapZones = [
     ],
   },
   {
+    no: '02',
     area: 'Memorial axis',
     zh: '紀念碑軸線',
     tone: 'gold',
+    route: 'Lincoln, Vietnam, Korean, WWII, Reflecting Pool, Monument',
     places: [
-      ['Lincoln', maps.lincoln],
-      ['Vietnam and Korean', maps.vietnam],
-      ['WWII', maps.wwii],
-      ['Washington Monument', maps.monument],
+      ['Lincoln Memorial', maps.lincoln],
+      ['Vietnam Memorial', maps.vietnam],
+      ['Korean Memorial', maps.korean],
+      ['WWII Memorial', maps.wwii],
       ['Reflecting Pool', maps.reflectingPool],
+      ['Washington Monument', maps.monument],
     ],
   },
   {
-    area: 'Central Mall',
+    no: '03',
+    area: 'Mall museums',
     zh: '博物館核心',
     tone: 'blue',
+    route: 'National Gallery, Natural History, American History, Air and Space',
     places: [
-      ['White House', maps.whiteHouse],
       ['National Gallery', maps.nga],
       ['Natural History', official[7][1]],
       ['American History', official[8][1]],
       ['Air and Space', maps.airSpace],
+      ['White House', maps.whiteHouse],
     ],
   },
   {
+    no: '04',
     area: 'Capitol side',
     zh: '國會東側',
     tone: 'purple',
+    route: 'Library of Congress, Capitol, Penn Quarter food',
     places: [
       ['Library of Congress', maps.loc],
       ['U.S. Capitol', official[3][1]],
@@ -392,15 +401,24 @@ const mapZones = [
     ],
   },
   {
+    no: '05',
     area: 'South waterfront',
     zh: '南側水岸',
     tone: 'red',
+    route: 'Jefferson Memorial, The Wharf, DCA Terminal 2',
     places: [
       ['Jefferson Memorial', maps.jefferson],
       ['The Wharf DC', maps.wharf],
       ['DCA Terminal 2', maps.dcaT2],
     ],
   },
+];
+
+const mapRoutes = [
+  ['Museum row', 'National Gallery → Natural History → American History → Air and Space', '室內動線'],
+  ['Memorial walk', 'Washington Monument → WWII → Reflecting Pool → Lincoln', '早上或傍晚'],
+  ['Water route', 'Georgetown → Potomac Water Taxi → The Wharf', '天候正常時'],
+  ['Capitol side', 'LOC → Capitol → DAIKAYA or Bantam King', '東側收尾'],
 ];
 
 function JumpNav() {
@@ -541,9 +559,13 @@ function SchematicMap() {
         {mapZones.map((zone) => (
           <article className={`zoneCard ${zone.tone}`} key={zone.area}>
             <div className="zoneTop">
-              <span>{zone.area}</span>
-              <b>{zone.zh}</b>
+              <i>{zone.no}</i>
+              <div>
+                <span>{zone.area}</span>
+                <b>{zone.zh}</b>
+              </div>
             </div>
+            <p className="zoneRoute">{zone.route}</p>
             <div className="zonePlaces">
               {zone.places.map(([name, href]) => (
                 <a key={name} href={href} target="_blank" rel="noreferrer">{name}</a>
@@ -552,16 +574,14 @@ function SchematicMap() {
           </article>
         ))}
       </div>
-      <div className="routeRibbon">
-        <span>Georgetown</span>
-        <i />
-        <span>Memorials</span>
-        <i />
-        <span>Museums</span>
-        <i />
-        <span>Capitol</span>
-        <i />
-        <span>The Wharf</span>
+      <div className="routeBoard">
+        {mapRoutes.map(([name, path, note]) => (
+          <div key={name}>
+            <b>{name}</b>
+            <span>{path}</span>
+            <small>{note}</small>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -653,11 +673,6 @@ function DCSpotsInfrastructure() {
             <span>The Wharf</span>
           </div>
         </div>
-        <div className="heroCard">
-          <span className="bigNo">04</span>
-          <p>票券優先</p>
-          <b>Monument · Air and Space · LOC · Capitol</b>
-        </div>
       </header>
 
       <JumpNav />
@@ -730,8 +745,8 @@ const css = `
 :root {
   --bg: #FCFAF2;
   --ink: #24211D;
-  --muted: #332E28;
-  --soft: #3F3A34;
+  --muted: #29251F;
+  --soft: #302B25;
   --line: #E7D9C3;
   --card: #FFFDF8;
   --paper: #F7F0E3;
@@ -754,6 +769,27 @@ body { margin: 0; background: var(--bg); }
 a { color: inherit; }
 button { font: inherit; }
 
+.dcPage h1,
+.dcPage h2,
+.dcPage h3,
+.dcPage h4,
+.dcPage p,
+.dcPage b,
+.dcPage span,
+.dcPage small,
+.dcPage summary,
+.dcPage a,
+.dcPage button {
+  opacity: 1;
+}
+
+.dcPage h1,
+.dcPage h2,
+.dcPage h3,
+.dcPage h4 {
+  color: var(--ink);
+}
+
 .dcPage {
   min-height: 100vh;
   background:
@@ -772,7 +808,7 @@ button { font: inherit; }
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 24px;
   align-items: stretch;
   padding: 44px 0 18px;
@@ -812,7 +848,10 @@ button { font: inherit; }
 h1, h2, h3, h4, p { margin-top: 0; }
 
 h1 {
-  font-size: clamp(3.2rem, 11vw, 8rem);
+  color: var(--ink);
+  opacity: 1;
+  font-weight: 900;
+  font-size: clamp(3.2rem, 10vw, 6.8rem);
   line-height: 0.88;
   letter-spacing: -0.08em;
   margin: 0 0 18px;
@@ -843,32 +882,6 @@ h1 {
   color: var(--ink);
 }
 
-.heroCard {
-  border-radius: 34px;
-  padding: 28px;
-  background: var(--navy);
-  color: #FFFDF8;
-  box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 260px;
-}
-
-.bigNo {
-  font-size: 5.6rem;
-  line-height: 0.9;
-  font-weight: 900;
-  letter-spacing: -0.08em;
-  color: #F4C45F;
-}
-
-.heroCard p {
-  margin: 18px 0 8px;
-  color: rgba(255, 253, 248, 0.9);
-}
-
-.heroCard b { line-height: 1.35; }
 
 .jumpNav {
   position: sticky;
@@ -929,6 +942,8 @@ h1 {
 
 .priorityStrip b {
   display: block;
+  color: var(--ink);
+  opacity: 1;
   font-size: 1.5rem;
   letter-spacing: -0.04em;
 }
@@ -936,7 +951,7 @@ h1 {
 .priorityStrip span,
 .priorityStrip small {
   display: block;
-  color: var(--muted);
+  color: var(--soft);
   line-height: 1.35;
 }
 
@@ -950,7 +965,7 @@ h1 {
 .sectionHead {
   display: flex;
   align-items: end;
-  gap: 14px;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
@@ -967,6 +982,9 @@ h1 {
 
 .sectionHead h2 {
   margin: 0;
+  color: var(--ink);
+  opacity: 1;
+  font-weight: 900;
   font-size: clamp(1.65rem, 4vw, 3.4rem);
   letter-spacing: -0.06em;
 }
@@ -1000,6 +1018,8 @@ h1 {
 
 .mapHeader h3 {
   margin: 0 0 4px;
+  color: var(--ink);
+  opacity: 1;
   font-size: clamp(1.45rem, 3vw, 2.35rem);
   letter-spacing: -0.055em;
 }
@@ -1013,36 +1033,16 @@ h1 {
 
 .zoneMap {
   display: grid;
-  grid-template-columns: 1.05fr 1.25fr 1.35fr 1.1fr 1.05fr;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 12px;
   position: relative;
 }
 
-.zoneMap::before {
-  content: "Potomac / National Mall flow";
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  top: 50%;
-  height: 18px;
-  transform: translateY(-50%);
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(88, 178, 220, 0.2), rgba(217, 166, 46, 0.22), rgba(88, 178, 220, 0.16));
-  color: rgba(36, 33, 29, 0.72);
-  font-size: 0.82rem;
-  font-weight: 850;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
 
 .zoneCard {
   position: relative;
   z-index: 1;
-  min-height: 280px;
+  min-height: 238px;
   border-radius: 26px;
   padding: 16px;
   border: 1px solid rgba(231, 217, 195, 0.95);
@@ -1059,10 +1059,30 @@ h1 {
 .zoneCard.purple { background: linear-gradient(180deg, rgba(143, 119, 181, 0.14), #FFFDF8 56%); }
 .zoneCard.red { background: linear-gradient(180deg, rgba(203, 64, 66, 0.12), #FFFDF8 56%); }
 
+.zoneTop {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.zoneTop i {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--ink);
+  color: var(--bg);
+  font-style: normal;
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
 .zoneTop span {
   display: block;
   color: var(--ink);
-  font-size: 1.02rem;
+  font-size: 1.1rem;
   font-weight: 900;
   letter-spacing: -0.025em;
 }
@@ -1070,8 +1090,16 @@ h1 {
 .zoneTop b {
   display: block;
   margin-top: 3px;
+  color: var(--soft);
+  font-size: 0.98rem;
+}
+
+.zoneRoute {
+  margin: 0;
   color: var(--muted);
-  font-size: 0.95rem;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  font-weight: 720;
 }
 
 .zonePlaces {
@@ -1096,25 +1124,43 @@ h1 {
   color: var(--red);
 }
 
-.routeRibbon {
+.routeBoard {
   display: grid;
-  grid-template-columns: auto 1fr auto 1fr auto 1fr auto 1fr auto;
-  align-items: center;
-  gap: 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
   margin-top: 14px;
-  padding: 12px 14px;
-  border-radius: 22px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  color: var(--ink);
-  font-weight: 850;
-  font-size: 0.94rem;
 }
 
-.routeRibbon i {
-  height: 2px;
-  background: rgba(36, 33, 29, 0.22);
-  border-radius: 999px;
+.routeBoard div {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 20px;
+  padding: 12px;
+}
+
+.routeBoard b,
+.routeBoard span,
+.routeBoard small {
+  display: block;
+}
+
+.routeBoard b {
+  color: var(--ink);
+  font-size: 0.98rem;
+  margin-bottom: 5px;
+}
+
+.routeBoard span {
+  color: var(--ink);
+  font-size: 0.94rem;
+  line-height: 1.35;
+  font-weight: 760;
+}
+
+.routeBoard small {
+  color: var(--soft);
+  margin-top: 5px;
+  font-weight: 760;
 }
 
 .ticketGrid {
@@ -1175,6 +1221,8 @@ h1 {
 .visualCard h3,
 .foodCard h3 {
   margin: 0;
+  color: var(--ink);
+  opacity: 1;
   font-size: 1.08rem;
   line-height: 1.18;
   letter-spacing: -0.035em;
@@ -1372,9 +1420,8 @@ summary {
 
 @media (max-width: 1060px) {
   .hero { grid-template-columns: 1fr; }
-  .heroCard { min-height: auto; }
   .zoneMap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .zoneMap::before { display: none; }
+  .routeBoard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ticketGrid, .foodGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cardGrid, .cardGrid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .linkGrid, .sourceGrid, .rulesGrid, .priorityStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1385,13 +1432,11 @@ summary {
   :root { font-size: 17px; }
   .zoneMap { grid-template-columns: 1fr; }
   .zoneCard { min-height: auto; }
-  .routeRibbon { display: none; }
+  .routeBoard { grid-template-columns: 1fr; }
   .mapHeader { display: block; }
   .mapHeader .outLink { margin-top: 12px; display: inline-flex; }
   .hero { padding-top: 18px; gap: 12px; }
   .heroText { border-radius: 26px; padding: 26px; }
-  .heroCard { border-radius: 26px; padding: 22px; }
-  .bigNo { font-size: 4rem; }
   .jumpNav {
     overflow-x: auto;
     grid-template-columns: none;
