@@ -132,7 +132,7 @@ const fair = {
     ['July 4', '12:00 PM to 12:00 AM', '7 月 4 日'],
   ],
   gates: ['7th and Jefferson SW', '7th and Madison NW', '12th and Jefferson SW', '12th and Madison NW'],
-  see: ['State and territory pavilions', '110 ft Ferris wheel', 'Cultural programming', 'Military ensembles', 'Industry displays', 'Night lights'],
+  see: ['State and territory pavilions', '110 ft Ferris wheel', 'Cultural programming', 'Military ensembles', 'Industry displays', 'Evening setting'],
   zh: '免費入場，walk up 可進場。若時間有限，晚上抓 1.5 至 2 小時即可。National Mall 可能有圍欄、安檢與人潮，實際步行時間會變長。',
   foods: ['Mac and cheese', 'Italian sausage', 'Burgers', 'Hot dogs', 'Corn dogs', 'Chicago pizza', 'NY pizza', 'Asian chicken rice bowl', 'Thai iced tea', 'Lemonade', 'Ice cream', 'Elote'],
 };
@@ -198,7 +198,7 @@ const outdoor = [
     pins: [['Thomas Jefferson Memorial', maps.jefferson]],
     zh: '黃昏或夜間適合短停留，可拍 Washington Monument 倒影。不必繞 Tidal Basin 完整一圈。',
     best: 'Sunset or night',
-    see: ['Jefferson statue', 'Tidal Basin water', 'Monument reflection', 'Evening lights'],
+    see: ['Jefferson statue', 'Tidal Basin water', 'Monument reflection', 'Evening setting'],
   },
   {
     name: 'White House',
@@ -227,7 +227,7 @@ const outdoor = [
     pins: [['The Wharf DC', maps.wharf]],
     zh: '現代水岸區，可安排傍晚、晚餐或短程散步。也能銜接 Georgetown water taxi。',
     best: 'Evening',
-    see: ['Transit Pier', 'District Pier', 'Municipal Fish Market', 'Washington Channel', 'Night lights'],
+    see: ['Transit Pier', 'District Pier', 'Municipal Fish Market', 'Washington Channel', 'Evening setting'],
   },
   {
     name: 'Potomac Water Taxi',
@@ -744,28 +744,28 @@ function DCSpotsInfrastructure() {
 const css = `
 :root {
   --bg: #FCFAF2;
-  --ink: #24211D;
-  --muted: #29251F;
-  --soft: #302B25;
-  --line: #E7D9C3;
+  --ink: #332A22;
+  --muted: #4B4036;
+  --soft: #5B4E43;
+  --line: #D8C5A8;
   --card: #FFFDF8;
-  --paper: #F7F0E3;
+  --paper: #F2E7D4;
   --red: #CB4042;
   --blue: #58B2DC;
   --green: #5DAC81;
   --gold: #D9A62E;
-  --navy: #0F2540;
+  --navy: #1D354D;
   --purple: #8F77B5;
-  --shadow: 0 24px 80px rgba(35, 29, 20, 0.10);
+  --shadow: 0 24px 80px rgba(65, 48, 31, 0.12);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-size: 16px;
-  color: var(--ink);
+  color: var(--muted);
   background: var(--bg);
 }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--muted); }
 a { color: inherit; }
 button { font: inherit; }
 
@@ -797,6 +797,9 @@ button { font: inherit; }
     radial-gradient(circle at 80% 18%, rgba(88, 178, 220, 0.16), transparent 30rem),
     var(--bg);
   padding: 24px;
+  color: var(--muted);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .hero,
@@ -838,7 +841,7 @@ button { font: inherit; }
 .kicker,
 .label {
   margin: 0 0 10px;
-  color: var(--red);
+  color: #B33A3C;
   font-size: 0.9rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
@@ -848,7 +851,7 @@ button { font: inherit; }
 h1, h2, h3, h4, p { margin-top: 0; }
 
 h1 {
-  color: var(--ink);
+  color: #3A3028;
   opacity: 1;
   font-weight: 900;
   font-size: clamp(3.2rem, 10vw, 6.8rem);
@@ -872,8 +875,8 @@ h1 {
 .chips span,
 .filterRow button,
 .outLink {
-  border: 1px solid var(--line);
-  background: rgba(255, 253, 248, 0.85);
+  border: 1px solid #D5C1A3;
+  background: rgba(255, 253, 248, 0.94);
   border-radius: 999px;
   padding: 8px 11px;
   font-size: 0.9rem;
@@ -975,14 +978,14 @@ h1 {
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--ink);
-  color: var(--bg);
+  background: #3A3028;
+  color: #FCFAF2;
   font-weight: 900;
 }
 
 .sectionHead h2 {
   margin: 0;
-  color: var(--ink);
+  color: #3A3028;
   opacity: 1;
   font-weight: 900;
   font-size: clamp(1.65rem, 4vw, 3.4rem);
@@ -1072,8 +1075,8 @@ h1 {
   display: grid;
   place-items: center;
   border-radius: 14px;
-  background: var(--ink);
-  color: var(--bg);
+  background: #3A3028;
+  color: #FCFAF2;
   font-style: normal;
   font-weight: 900;
   font-size: 0.9rem;
@@ -1275,16 +1278,17 @@ details p {
 }
 
 .chips span {
-  background: var(--paper);
-  color: #3D3832;
+  background: #F3E8D6;
+  color: #4A4036;
   line-height: 1.25;
+  border-color: #D5C1A3;
 }
 
 .cardActions { margin-top: 14px; }
 .outLink:hover, .filterRow button:hover { border-color: var(--red); color: var(--red); }
 .outLink.solid {
-  background: var(--ink);
-  color: var(--bg);
+  background: #3A3028;
+  color: #FCFAF2;
   border-color: var(--ink);
   width: fit-content;
 }
@@ -1314,14 +1318,15 @@ summary {
   margin-bottom: 14px;
 }
 .fairHero h3 { margin: 0 0 8px; font-size: clamp(1.5rem, 3vw, 2.6rem); letter-spacing: -0.06em; }
-.fairHero p { margin-bottom: 4px; color: var(--muted); }
+.fairHero p { margin-bottom: 4px; color: var(--muted); font-weight: 650; }
 .fairGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
 .glassBox.wide { grid-column: span 2; }
-.glassBox h4 { margin-bottom: 12px; font-size: 1rem; }
+.glassBox h4 { margin-bottom: 12px; font-size: 1.05rem; color: #3A3028; }
+.glassBox p, .glassBox span, .glassBox small { color: var(--muted); }
 .rowLine {
   display: grid;
   grid-template-columns: 1fr 1.2fr 0.8fr;
@@ -1332,7 +1337,7 @@ summary {
 }
 .rowLine:last-child { border-bottom: 0; }
 .rowLine span, .rowLine small { color: var(--muted); }
-.rowLine b { font-size: 0.94rem; }
+.rowLine b { font-size: 0.98rem; color: #3A3028; font-weight: 850; }
 
 .filterRow { margin-bottom: 14px; }
 .filterRow button {
@@ -1340,9 +1345,9 @@ summary {
   color: var(--soft);
 }
 .filterRow button.active {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: var(--bg);
+  background: #3A3028;
+  border-color: #3A3028;
+  color: #FCFAF2;
 }
 
 .foodCard { position: relative; overflow: hidden; }
@@ -1416,6 +1421,133 @@ summary {
   color: #fff;
   font-weight: 900;
   box-shadow: 0 16px 40px rgba(203, 64, 66, 0.28);
+}
+
+
+.glassBox,
+.ticketCard,
+.simpleCard,
+.visualCard,
+.foodCard,
+.rulesGrid div,
+.zoneCard,
+.priorityStrip div {
+  color: var(--muted);
+}
+
+.ticketTop p,
+.area,
+.miniHead span,
+.routeBoard small,
+.zoneTop b,
+.priorityStrip small {
+  color: var(--soft);
+}
+
+.routeBoard b,
+.routeBoard span,
+.priorityStrip b,
+.priorityStrip span,
+.zoneTop span,
+.zonePlaces a,
+.ticketTop h3,
+.simpleCard h3,
+.visualCard h3,
+.foodCard h3 {
+  color: #3A3028;
+}
+
+.outLink,
+.filterRow button,
+.heroBadges span {
+  color: #3A3028;
+  font-weight: 700;
+}
+
+.outLink.solid,
+.filterRow button.active,
+.zoneTop i,
+.sectionHead span {
+  color: #FCFAF2;
+}
+
+
+/* Final contrast pass: warm dark brown palette. */
+.dcPage { color: var(--muted); }
+.dcPage p,
+.dcPage small,
+.dcPage details p,
+.dcPage .glassBox p,
+.dcPage .glassBox span,
+.dcPage .glassBox small,
+.dcPage .rowLine span,
+.dcPage .rowLine small,
+.dcPage .mapHeader p,
+.dcPage .fairHero p,
+.dcPage .zoneRoute,
+.dcPage .tight,
+.dcPage .zhLine,
+.dcPage .simpleCard p,
+.dcPage .visualCard p,
+.dcPage .foodCard p,
+.dcPage .rulesGrid p {
+  color: #4B4036;
+}
+.dcPage h1,
+.dcPage h2,
+.dcPage h3,
+.dcPage h4,
+.dcPage strong,
+.dcPage b,
+.dcPage summary,
+.dcPage .rowLine b,
+.dcPage .priorityStrip b,
+.dcPage .priorityStrip span,
+.dcPage .routeBoard b,
+.dcPage .routeBoard span,
+.dcPage .zoneTop span,
+.dcPage .zonePlaces a,
+.dcPage .ticketTop h3,
+.dcPage .simpleCard h3,
+.dcPage .visualCard h3,
+.dcPage .foodCard h3 {
+  color: #3A3028;
+}
+.dcPage .kicker,
+.dcPage .label { color: #B33A3C; }
+.dcPage .ticketTop p,
+.dcPage .area,
+.dcPage .miniHead span,
+.dcPage .routeBoard small,
+.dcPage .zoneTop b,
+.dcPage .priorityStrip small,
+.dcPage .foodTag {
+  color: #5B4E43;
+}
+.dcPage .chips span,
+.dcPage .heroBadges span,
+.dcPage .outLink,
+.dcPage .filterRow button {
+  color: #44392F;
+  border-color: #D5C1A3;
+}
+.dcPage .outLink.solid,
+.dcPage .filterRow button.active,
+.dcPage .zoneTop i,
+.dcPage .sectionHead span,
+.dcPage .ticketTop b,
+.dcPage .floatingMap {
+  color: #FCFAF2;
+}
+.dcPage .sectionHead span,
+.dcPage .zoneTop i,
+.dcPage .filterRow button.active,
+.dcPage .outLink.solid {
+  background: #3A3028;
+  border-color: #3A3028;
+}
+.dcPage .floatingMap {
+  background: #CB4042;
 }
 
 @media (max-width: 1060px) {
