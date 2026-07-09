@@ -1,29 +1,8 @@
 import React, { useMemo, useState } from 'react';
 
-const colors = {
-  bg: '#FCFAF2',
-  ink: '#22201D',
-  muted: '#6B6259',
-  line: '#E5DAC8',
-  card: '#FFFDF8',
-  card2: '#F7F0E3',
-  navy: '#0F2540',
-  red: '#CB4042',
-  blue: '#2EA9DF',
-  green: '#5DAC81',
-  gold: '#D9A62E',
-  brown: '#8A6B4F',
-  purple: '#8F77B5',
-  softRed: '#F8E9E8',
-  softBlue: '#EAF5FA',
-  softGreen: '#EAF4EE',
-  softGold: '#F8F0D9',
-  softPurple: '#F1EDF7',
-};
+const mapListUrl = 'https://maps.app.goo.gl/3V7D3rmZY6j4Umih6';
 
-const googleMapList = 'https://maps.app.goo.gl/3V7D3rmZY6j4Umih6';
-
-const mapLinks = {
+const maps = {
   loganC: 'https://maps.app.goo.gl/ZAD5jzY97FQXXQiD9',
   dcaT2: 'https://maps.app.goo.gl/Ak1smXPiGH3N7vLv9',
   teaism: 'https://maps.app.goo.gl/sKG3LQYGEfaLxyXW8',
@@ -49,24 +28,21 @@ const mapLinks = {
   bantamKing: 'https://maps.app.goo.gl/Ma3KkMjs529UysY18',
 };
 
-const officialSources = [
+const official = [
   ['Washington Monument', 'https://www.recreation.gov/ticket/facility/234635'],
   ['National Air and Space Museum', 'https://airandspace.si.edu/visit/museum-dc'],
   ['Library of Congress', 'https://www.loc.gov/visit/'],
   ['U.S. Capitol Tour', 'https://www.visitthecapitol.gov/visit/book-a-tour'],
-  ['United States Holocaust Memorial Museum', 'https://www.ushmm.org/information/visit-the-museum/admission-tickets'],
-  ['National Museum of African American History and Culture', 'https://nmaahc.si.edu/visit/passes'],
   ['Freedom 250 Great American State Fair', 'https://www.freedom250.org/celebration/the-great-american-state-fair'],
   ['Freedom 250 Food', 'https://freedom250.org/media-center/press-release/freedom-250-food-showcases-americas-culinary-tradition'],
   ['National Gallery of Art', 'https://www.nga.gov/visit'],
   ['Natural History Museum', 'https://naturalhistory.si.edu/visit'],
   ['American History Museum', 'https://americanhistory.si.edu/visit'],
   ['National Museum of Asian Art', 'https://asia.si.edu/visit/'],
-  ['Hirshhorn Museum and Sculpture Garden', 'https://hirshhorn.si.edu/visit/'],
+  ['Hirshhorn Museum', 'https://hirshhorn.si.edu/visit/'],
   ['White House Visitor Center', 'https://www.nps.gov/whho/planyourvisit/white-house-visitor-center.htm'],
   ['Georgetown Waterfront Park', 'https://www.nps.gov/places/georgetown-waterfront-park.htm'],
   ['The Wharf DC', 'https://www.wharfdc.com/'],
-  ['The Wharf Parks and Piers', 'https://www.wharfdc.com/things-to-do/parks-piers/'],
   ['Potomac Water Taxi', 'https://www.cityexperiences.com/washington-dc/city-cruises/water-taxi/'],
   ['Old Ebbitt Grill', 'https://www.ebbitt.com/'],
   ['DAIKAYA', 'https://www.daikaya.com/location/daikaya/'],
@@ -78,625 +54,1371 @@ const officialSources = [
   ['Zaytinya', 'https://www.zaytinya.com/'],
 ];
 
-const priority = [
-  ['01', 'Washington Monument', '30 days, day before, or same day walk up', '最容易影響動線。先查 30 天前票、前一日票與現場票。', '#monument'],
-  ['02', 'National Air and Space Museum', 'Free timed entry required', '人氣高，D.C. 本館需要免費時段票。', '#airspace'],
-  ['03', 'Library of Congress', 'Free timed entry required', 'Thomas Jefferson Building 必看，當日票 9:00 AM ET 釋出。', '#loc'],
-  ['04', 'U.S. Capitol Tour', 'Reservation recommended', '免費導覽，建議先預約。安檢時間需保守估計。', '#capitol'],
-  ['05', 'Holocaust Memorial Museum', 'Permanent Exhibition ticket', 'Permanent Exhibition 需要免費 timed entry ticket。', '#ushmm'],
-  ['06', 'NMAAHC', 'High demand timed entry pass', '內容量大，所有訪客都需要 pass。', '#nmaahc'],
+const navItems = [
+  ['map', 'Map', '地圖'],
+  ['tickets', 'Tickets', '票券'],
+  ['fair', 'Fair', '期間限定'],
+  ['museums', 'Museums', '博物館'],
+  ['outdoors', 'Outdoors', '戶外'],
+  ['food', 'Food', '美食'],
+  ['links', 'Links', '連結'],
 ];
 
-const ticketedSpots = [
+const ticketCards = [
   {
-    id: 'monument',
+    no: '01',
     name: 'Washington Monument',
-    area: 'National Mall',
-    address: '2 15th St NW, Washington, DC 20024',
-    maps: mapLinks.monument,
-    official: 'https://www.recreation.gov/ticket/facility/234635',
-    status: 'Book first',
-    statusZh: '優先搶票',
-    time: 'Usually 9:00 AM to 5:00 PM. Last tour is commonly 4:00 PM. Closed Dec 25, July 4, and part of July 3.',
-    timeZh: '通常 9:00 AM 至 5:00 PM，最後參觀票常為 4:00 PM。12 月 25 日、7 月 4 日及 7 月 3 日部分時段關閉。',
-    ticket: 'Free ticket. Online reservation has a nonrefundable $1 service fee. 30 day advance tickets release at 10:00 AM ET. Day before tickets release at 3:00 PM ET. Same day walk up tickets begin at 8:45 AM at Washington Monument Lodge when available.',
-    ticketZh: '門票免費，線上預約每張收不可退 $1 手續費。30 天前票 10:00 AM ET 釋出，前一日票 3:00 PM ET 釋出。若有現場同日票，8:45 AM 起在 Washington Monument Lodge 發放。',
-    value: 'Best high view on the Mall. Four direction windows show the White House, Capitol, Lincoln Memorial, Jefferson Memorial, and Potomac River.',
-    valueZh: 'National Mall 最具代表性的高處視角。四面窗景可看 White House、Capitol、Lincoln Memorial、Jefferson Memorial 與 Potomac River。',
-    see: ['500 foot observation level', 'Small museum near 490 feet', 'Interior commemorative stones', 'Reflecting Pool and Capitol axis'],
-    caution: 'Arrive at least 15 minutes early. Do not bring knives, scissors, multitools, large bags, glass bottles, aerosol cans, food, or drinks. No restroom, water, food service, or storage inside.',
-    cautionZh: '至少提早 15 分鐘抵達。不要帶刀具、剪刀、多功能工具、大包、玻璃瓶、噴霧、食物或飲料。內部沒有洗手間、飲水、餐飲或置物服務。',
+    maps: maps.monument,
+    official: official[0][1],
+    tag: 'Book first',
+    zhTag: '最優先',
+    key: '$1 service fee. 30 day tickets release 10:00 AM ET. Day before tickets release 3:00 PM ET. Walk up tickets begin 8:45 AM at Washington Monument Lodge when available.',
+    zh: '免費票，線上每張收 $1 手續費。30 天前票 10:00 AM ET 釋出，前一日票 3:00 PM ET 釋出。若有現場票，8:45 AM 起在 Washington Monument Lodge 發放。',
+    see: ['500 ft view', '490 ft museum', 'Interior stones', 'Reflecting Pool axis'],
+    avoid: 'No restroom, water, food, or storage inside. Travel light.',
+    avoidZh: '內部沒有洗手間、飲水、餐飲或置物服務。小包最穩。',
   },
   {
-    id: 'airspace',
+    no: '02',
     name: 'National Air and Space Museum',
-    area: 'National Mall',
-    address: '650 Jefferson Drive SW, Washington, DC 20560',
-    maps: mapLinks.airSpace,
-    official: 'https://airandspace.si.edu/visit/museum-dc',
-    status: 'Timed pass',
-    statusZh: '需要時段票',
-    time: 'Usually 10:00 AM to 5:30 PM. Free timed entry passes are required for the D.C. museum.',
-    timeZh: '通常 10:00 AM 至 5:30 PM。D.C. 本館免費，但需要 timed entry pass。',
-    ticket: 'Reserve before building the rest of the day. Entry is through Jefferson Drive SW. Gallery access can change because the museum is still affected by phased renovation.',
-    ticketZh: '先預約入場時段，再安排其他點。入口在 Jefferson Drive SW。因分階段整修，展區狀態可能變動。',
-    value: 'Best first visit museum for aviation, spaceflight, and American technology history.',
-    valueZh: '航空、太空與美國科技史最核心的首訪博物館。',
-    see: ['1903 Wright Flyer', 'Apollo 11 Command Module Columbia', 'Neil Armstrong Apollo 11 spacesuit', 'Spirit of St. Louis', 'Bell X 1', 'Friendship 7', 'X 15', 'Lunar Module LM 2'],
-    caution: 'Plan 90 minutes to 2 hours. Do not try to read every label.',
-    cautionZh: '建議 90 分鐘至 2 小時。不要試圖全館讀完。',
+    maps: maps.airSpace,
+    official: official[1][1],
+    tag: 'Timed pass',
+    zhTag: '需要時段票',
+    key: 'Free timed entry pass required for the D.C. museum. Entry is through Jefferson Drive SW.',
+    zh: 'D.C. 本館免費，但需要 timed entry pass。入口在 Jefferson Drive SW。',
+    see: ['1903 Wright Flyer', 'Apollo 11 Columbia', 'Neil Armstrong spacesuit', 'Spirit of St. Louis', 'Bell X 1'],
+    avoid: 'Plan 90 minutes to 2 hours. Do not try to read every label.',
+    avoidZh: '建議 90 分鐘至 2 小時。不要試圖全館讀完。',
   },
   {
-    id: 'loc',
-    name: 'Library of Congress, Thomas Jefferson Building',
-    area: 'Capitol Hill',
-    address: '10 First Street SE, Washington, DC 20540',
-    maps: mapLinks.loc,
-    official: 'https://www.loc.gov/visit/',
-    status: 'Timed pass',
-    statusZh: '需要時段票',
-    time: 'Free timed entry tickets are required. Tickets are available 30 days in advance. Same day tickets release online daily at 9:00 AM ET.',
-    timeZh: '需要免費 timed entry ticket。票券 30 天前開放。當日票每日 9:00 AM ET 線上釋出。',
-    ticket: 'Thursday Live at the Library evenings are especially useful when available.',
-    ticketZh: '若週四晚間 Live at the Library 開放，特別值得安排。',
-    value: 'One of D.C.’s strongest interiors. It combines architecture, national memory, congressional symbolism, and library culture.',
-    valueZh: 'D.C. 最值得看的室內空間之一，結合建築、國家記憶、國會象徵與圖書館文化。',
-    see: ['Great Hall', 'Main Reading Room overlook or walkthrough', 'Thomas Jefferson’s Library', 'Current exhibitions', 'Library Store'],
-    caution: 'Enter at the First Street SE ground or driveway level, not the top of the grand staircase. Ask volunteers early about Main Reading Room walkthrough availability.',
-    cautionZh: '入口在 First Street SE 的 ground 或 driveway level，不是大階梯頂端。進館後先問志工 Main Reading Room walkthrough 是否仍有名額。',
+    no: '03',
+    name: 'Library of Congress',
+    maps: maps.loc,
+    official: official[2][1],
+    tag: 'Timed pass',
+    zhTag: '需要時段票',
+    key: 'Tickets are free. Advance tickets are available 30 days out. Same day tickets release online at 9:00 AM ET.',
+    zh: '免費票。30 天前可預約，當日票每日 9:00 AM ET 線上釋出。',
+    see: ['Great Hall', 'Main Reading Room', 'Jefferson Library', 'Current exhibitions', 'Library Store'],
+    avoid: 'Enter from First Street SE at ground or driveway level, not the top of the staircase.',
+    avoidZh: '入口在 First Street SE 的 ground 或 driveway level，不是大階梯頂端。',
   },
   {
-    id: 'capitol',
+    no: '04',
     name: 'U.S. Capitol Tour',
-    area: 'Capitol Hill',
-    address: 'U.S. Capitol Visitor Center, Washington, DC 20510. Entrance is on the east side underground visitor center.',
-    official: 'https://www.visitthecapitol.gov/visit/book-a-tour',
-    status: 'Reserve',
-    statusZh: '建議預約',
-    time: 'Capitol Visitor Center is open Monday to Saturday, 8:30 AM to 4:30 PM. Closed Thanksgiving, Christmas Day, and New Year’s Day.',
-    timeZh: 'Capitol Visitor Center 週一至週六 8:30 AM 至 4:30 PM 開放。感恩節、聖誕節與元旦關閉。',
-    ticket: 'Tours and entry are free. Reservations are recommended. Same day passes may be available, but should not be assumed during busy periods.',
-    ticketZh: '導覽與入場免費，建議預約。現場同日票可能有，但旺季不要假設一定拿得到。',
-    value: 'The official congressional building experience, with the Rotunda, National Statuary Hall, Crypt, and Exhibition Hall.',
-    valueZh: '正式的國會大廈參觀體驗，重點包含 Rotunda、National Statuary Hall、Crypt 與 Exhibition Hall。',
-    see: ['Capitol Rotunda', 'National Statuary Hall', 'Crypt', 'Exhibition Hall', 'East and west exterior views'],
-    caution: 'Arrive early for security. Do not bring food or drinks. No luggage storage.',
-    cautionZh: '安檢可能耗時，請提早抵達。不可帶食物與飲料。不提供行李寄放。',
-  },
-  {
-    id: 'ushmm',
-    name: 'United States Holocaust Memorial Museum',
-    area: 'National Mall South',
-    address: '100 Raoul Wallenberg Place SW, Washington, DC 20024',
-    official: 'https://www.ushmm.org/information/visit-the-museum/admission-tickets',
-    status: 'Timed ticket',
-    statusZh: '展覽票優先',
-    time: 'Museum and exhibitions are open 10:00 AM to 5:30 PM ET. Last entrance into the Permanent Exhibition is 4:30 PM.',
-    timeZh: '博物館與展覽 10:00 AM 至 5:30 PM ET 開放。Permanent Exhibition 最晚入場 4:30 PM。',
-    ticket: 'Permanent Exhibition requires a free timed entry ticket. Advance tickets are online. Limited same day tickets release online daily at 7:00 AM ET.',
-    ticketZh: 'Permanent Exhibition 需要免費 timed entry ticket。可線上預約。有限當日票每日 7:00 AM ET 線上釋出。',
-    value: 'A major museum for Holocaust history, memory, documentation, and moral reflection.',
-    valueZh: '美國最重要的 Holocaust 主題博物館之一，重點在歷史、記憶、檔案與道德反思。',
-    see: ['Permanent Exhibition', 'Daniel’s Story', 'Special exhibitions', 'Memorial spaces'],
-    caution: 'Do not place it at the end of an exhausting day. The subject matter is heavy and deserves focus.',
-    cautionZh: '不要排在極度疲累的一天最後。內容沉重，需要完整注意力。',
-  },
-  {
-    id: 'nmaahc',
-    name: 'National Museum of African American History and Culture',
-    area: 'National Mall',
-    address: '1400 Constitution Ave NW, Washington, DC 20560',
-    official: 'https://nmaahc.si.edu/visit/passes',
-    status: 'High demand',
-    statusZh: '高需求票券',
-    time: 'All visitors, regardless of age, need a timed entry pass. Advance passes release 30 days in advance on a rolling basis. Same day passes release online daily by 8:15 AM ET.',
-    timeZh: '所有訪客不分年齡都需要 timed entry pass。預約票 30 天前 rolling release。當日票每日 8:15 AM ET 僅線上釋出。',
-    ticket: 'Book before planning the rest of a National Mall day. This is not a quick stop.',
-    ticketZh: '先搶票，再排 National Mall 其他點。若要真正理解內容，這不是快速打卡點。',
-    value: 'One of the deepest Smithsonian museums, covering slavery, civil rights, culture, music, sports, politics, and contemporary America.',
-    valueZh: 'Smithsonian 內容量最大的館之一，涵蓋奴隸制度、民權、文化、音樂、體育、政治與當代美國。',
-    see: ['History Galleries', 'Slavery and Freedom', 'Defending Freedom, Defining Freedom', 'A Changing America', 'Culture Galleries', 'Sweet Home Café'],
-    caution: 'Leave at least 2.5 to 3 hours. Avoid squeezing it between two fixed reservations.',
-    cautionZh: '至少留 2.5 至 3 小時。避免塞在兩個固定預約中間。',
+    official: official[3][1],
+    tag: 'Reserve',
+    zhTag: '建議預約',
+    key: 'Free tour. Capitol Visitor Center is usually Monday to Saturday, 8:30 AM to 4:30 PM.',
+    zh: '免費導覽。Capitol Visitor Center 通常週一至週六 8:30 AM 至 4:30 PM 開放。',
+    see: ['Rotunda', 'National Statuary Hall', 'Crypt', 'Exhibition Hall', 'Exterior views'],
+    avoid: 'Arrive early for security. No food, drinks, or luggage storage.',
+    avoidZh: '安檢時間需保守估計。不可帶食物與飲料，不提供行李寄放。',
   },
 ];
 
 const fair = {
   name: 'Freedom 250 Great American State Fair',
-  official: 'https://www.freedom250.org/celebration/the-great-american-state-fair',
-  foodOfficial: 'https://freedom250.org/media-center/press-release/freedom-250-food-showcases-americas-culinary-tradition',
-  dates: 'June 25 to July 10, 2026',
-  datesZh: '2026 年 6 月 25 日至 7 月 10 日',
-  location: 'National Mall, roughly 14th Street to 4th Street',
-  locationZh: 'National Mall，範圍約在 14th Street 至 4th Street 之間',
+  date: 'June 25 to July 10, 2026',
+  zhDate: '2026 年 6 月 25 日至 7 月 10 日',
+  place: 'National Mall, roughly 14th Street to 4th Street',
+  zhPlace: 'National Mall，約 14th Street 至 4th Street',
+  official: official[4][1],
+  food: official[5][1],
   hours: [
     ['Sun to Wed', '10:00 AM to 9:00 PM', '週日至週三'],
     ['Thu to Sat', '10:00 AM to 11:00 PM', '週四至週六'],
     ['July 4', '12:00 PM to 12:00 AM', '7 月 4 日'],
   ],
-  gates: ['7th Street and Jefferson Drive SW', '7th Street and Madison Drive NW', '12th Street and Jefferson Drive SW', '12th Street and Madison Drive NW'],
-  highlights: ['150 plus exhibits', '56 states and territories', 'State pavilions', 'Industry displays', 'Daily cultural programming', 'Military ensembles', 'Movie screenings', '110 foot Ferris wheel'],
-  food: ['Mac and cheese', 'Italian sausage', 'Burgers and hot dogs', 'Chicken tenders', 'Corn dogs', 'Chicago style pizza', 'NY style pizza', 'Asian chicken rice bowl', 'Thai iced tea and coffee', 'Lemonade', 'Ice cream and Italian ice', 'Elote', 'Fried yucca and thick cut fries'],
-  caution: 'Go in the evening if possible. Security gates, fences, heat, thunderstorms, and crowd control can add walking time. If the day is already tight, plan 1.5 to 2 hours.',
-  cautionZh: '能晚上去就晚上去。安檢入口、圍欄、高溫、午後雷雨與人流管制都可能增加步行時間。若時間有限，抓 1.5 至 2 小時即可。',
+  gates: ['7th and Jefferson SW', '7th and Madison NW', '12th and Jefferson SW', '12th and Madison NW'],
+  see: ['State and territory pavilions', '110 ft Ferris wheel', 'Cultural programming', 'Military ensembles', 'Industry displays', 'Night lights'],
+  zh: '免費入場，walk up 可進場。若時間有限，晚上抓 1.5 至 2 小時即可。National Mall 可能有圍欄、安檢與人潮，實際步行時間會變長。',
+  foods: ['Mac and cheese', 'Italian sausage', 'Burgers', 'Hot dogs', 'Corn dogs', 'Chicago pizza', 'NY pizza', 'Asian chicken rice bowl', 'Thai iced tea', 'Lemonade', 'Ice cream', 'Elote'],
 };
 
 const museums = [
-  {name:'National Gallery of Art', area:'National Mall', address:'6th St and Constitution Ave NW, Washington, DC 20565', maps:mapLinks.nga, official:'https://www.nga.gov/visit', duration:'90 min highlight, 2 to 3 hr normal', durationZh:'精華 90 分鐘，正常 2 至 3 小時', value:'Best free art stop for a first D.C. visit. Prioritize the West Building if time is limited.', valueZh:'第一次來 D.C. 最值得排的免費藝術館。時間有限時優先看 West Building。', see:['Leonardo da Vinci, Ginevra de’ Benci','Raphael, The Alba Madonna','Vermeer, Woman Holding a Balance','Fragonard, Young Girl Reading','Impressionism galleries','East Building modern art and architecture']},
-  {name:'Smithsonian National Museum of Natural History', area:'National Mall', address:'10th St. and Constitution Ave. NW, Washington, DC 20560', official:'https://naturalhistory.si.edu/visit', duration:'60 to 90 min highlight, 2 hr normal', durationZh:'精華 60 至 90 分鐘，正常 2 小時', value:'Easy first visit museum for families, mixed groups, and visitors who do not want an art heavy day.', valueZh:'適合第一次來、親子、混合興趣同行者，也適合不想整天看藝術的人。', see:['Hope Diamond','T. rex and Triceratops','African Bush Elephant','Sant Ocean Hall','Human Origins','Ancient Egyptian Mummies','Gems and Minerals'], caution:'Use Constitution Ave entrance when Mall routes are constrained. No bag or locker storage. Avoid knives, scissors, tools, selfie sticks, and tripods.', cautionZh:'National Mall 動線受限時，優先使用 Constitution Ave entrance。館內沒有 bag 或 locker storage。避免帶刀具、剪刀、工具、自拍棒與腳架。'},
-  {name:'Smithsonian National Museum of American History', area:'National Mall', address:'1300 Constitution Ave NW, Washington, DC 20560', official:'https://americanhistory.si.edu/visit', duration:'60 to 90 min highlight, 2 hr normal', durationZh:'精華 60 至 90 分鐘，正常 2 小時', value:'Strong fit for D.C. and America 250 themes, especially politics, culture, technology, war, transportation, and pop culture.', valueZh:'很符合 D.C. 與 America 250 主題，尤其適合看政治、文化、科技、戰爭、交通與流行文化。', see:['Star Spangled Banner','Lincoln’s Top Hat','Dorothy’s Ruby Slippers','Greensboro Lunch Counter','First Ladies','The American Presidency','America on the Move','The Price of Freedom','Entertainment Nation']},
-  {name:'National Museum of Asian Art', area:'National Mall South', address:'1050 Independence Ave SW, Washington, DC 20560', official:'https://asia.si.edu/visit/', duration:'60 to 90 min', durationZh:'60 至 90 分鐘', value:'Quieter and more refined than the busiest Mall museums. Good heat or rain shelter.', valueZh:'比熱門博物館安靜細緻，適合炎熱或下雨時安排室內休息。', see:['Peacock Room','Chinese bronzes and ceramics','Islamic art','Japanese screens and prints','Buddhist art']},
-  {name:'Hirshhorn Museum and Sculpture Garden', area:'National Mall South', address:'Independence Ave SW and 7th St SW, Washington, DC 20560', official:'https://hirshhorn.si.edu/visit/', duration:'45 to 90 min', durationZh:'45 至 90 分鐘', value:'Modern and contemporary art can be more memorable for visitors less interested in classical art.', valueZh:'對古典藝術興趣較低的同行者，現代與當代藝術反而可能更有記憶點。', see:['Circular building','Modern art exhibitions','Sculpture Garden','Large scale installations']},
+  {
+    name: 'National Gallery of Art',
+    maps: maps.nga,
+    official: official[6][1],
+    time: '90 min essential route, 2 to 3 hr normal route',
+    zh: '第一次來優先看 West Building。藝術興趣普通也值得排。',
+    see: ['Ginevra de’ Benci', 'The Alba Madonna', 'Woman Holding a Balance', 'Young Girl Reading', 'Impressionism', 'East Building'],
+  },
+  {
+    name: 'Natural History Museum',
+    official: official[7][1],
+    time: '60 to 90 min essential route, 2 hr normal route',
+    zh: '適合第一次到訪、親子與非藝術取向旅客。近期動線受限時，優先確認 Constitution Ave entrance。',
+    see: ['Hope Diamond', 'T. rex and Triceratops', 'African Bush Elephant', 'Sant Ocean Hall', 'Human Origins', 'Mummies'],
+  },
+  {
+    name: 'American History Museum',
+    official: official[8][1],
+    time: '60 to 90 min essential route, 2 hr normal route',
+    zh: '與 America 250 主題關聯高，涵蓋政治、文化、科技、戰爭與流行文化。',
+    see: ['Star Spangled Banner', 'Lincoln’s Top Hat', 'Ruby Slippers', 'Greensboro Lunch Counter', 'First Ladies', 'American Presidency'],
+  },
+  {
+    name: 'National Museum of Asian Art',
+    official: official[9][1],
+    time: '60 to 90 min',
+    zh: '館內節奏安靜，適合炎熱或下雨時安排室內停留。',
+    see: ['Peacock Room', 'East Asian ceramics', 'Bronzes', 'Islamic art', 'Japanese screens', 'Buddhist art'],
+  },
+  {
+    name: 'Hirshhorn Museum',
+    official: official[10][1],
+    time: '45 to 90 min',
+    zh: '現代與當代藝術。若同行者偏好裝置作品與建築空間，可作為古典藝術館以外的選項。',
+    see: ['Round building', 'Modern art', 'Sculpture Garden', 'Large installations'],
+  },
 ];
 
 const outdoor = [
-  {name:'National Mall Memorials', area:'Monument Core', anchor:'Washington Monument, WWII Memorial, Reflecting Pool, Lincoln Memorial, Vietnam Veterans Memorial, Korean War Veterans Memorial', maps:[['Washington Monument', mapLinks.monument], ['World War II Memorial', mapLinks.wwii], ['Reflecting Pool', mapLinks.reflectingPool], ['Lincoln Memorial', mapLinks.lincoln], ['Vietnam Memorial', mapLinks.vietnam], ['Korean War Veterans Memorial', mapLinks.korean]], value:'The classic outdoor D.C. axis. Distances look shorter on a map than they feel in summer heat.', valueZh:'D.C. 最經典戶外軸線。地圖上看似很近，夏天實際走起來會更累。', see:['Reflecting Pool','Lincoln Memorial steps','WWII Memorial fountain','Vietnam Veterans Memorial wall','Korean War Veterans Memorial statues'], advice:'Go early morning or near sunset. Do not force the full walk at midday.', adviceZh:'早上或傍晚去。不要在中午硬走完整段。'},
-  {name:'Thomas Jefferson Memorial and Tidal Basin', area:'Tidal Basin', anchor:'16 E Basin Dr SW, Washington, DC 20242', maps:[['Google Maps', mapLinks.jefferson]], value:'One of the best sunset and night views in D.C., usually calmer than the central Mall.', valueZh:'D.C. 最適合黃昏與夜景的區域之一，通常比 National Mall 中央更安靜。', see:['Jefferson statue','Tidal Basin water view','Washington Monument reflection','Evening lighting'], advice:'A short segment is enough. Do not loop the whole basin unless weather is comfortable.', adviceZh:'選一段短走即可。天氣不舒服時不必繞完整圈。'},
-  {name:'White House and White House Visitor Center', area:'Downtown', anchor:'Visitor Center, 1450 Pennsylvania Ave NW, Washington, DC 20230', maps:[['White House', mapLinks.whiteHouse]], official:'https://www.nps.gov/whho/planyourvisit/white-house-visitor-center.htm', value:'The building itself is viewed from outside. The Visitor Center adds artifacts, a short film, history, and a retail store.', valueZh:'白宮本體主要是外觀拍照。Visitor Center 補足歷史文物、短片、歷史脈絡與禮品店。', see:['North view from Lafayette Square','South view from The Ellipse','Visitor Center artifacts','White House Historical Association retail store'], advice:'The Visitor Center is not an interior White House tour. Roads nearby can close without much warning.', adviceZh:'Visitor Center 不是白宮內部參觀。周邊道路可能臨時封閉。'},
-  {name:'Georgetown', area:'Northwest Waterfront', anchor:'Wisconsin Ave, M Street, C&O Canal, Georgetown Waterfront Park, Washington Harbour', maps:[['Georgetown', mapLinks.georgetown], ['M Street and C&O Canal', mapLinks.mStreetCanal], ['Waterfront Park', mapLinks.waterfrontPark]], official:'https://www.nps.gov/places/georgetown-waterfront-park.htm', value:'Best half day neighborhood walk when you want D.C. beyond museums. Historic houses, canal paths, water views, food, and shops.', valueZh:'若想看博物館以外的 D.C. 城市生活，這是最適合半天慢走的街區之一，有歷史街屋、運河、水岸、餐廳與商店。', see:['Wisconsin Avenue','M Street','Old Stone House','C&O Canal','Georgetown Waterfront Park','Washington Harbour','Key Bridge and Rosslyn views'], advice:'Pair it with the Water Taxi to The Wharf when weather is good.', adviceZh:'天氣好時，很適合搭配 Water Taxi 前往 The Wharf。'},
-  {name:'The Wharf DC', area:'Southwest Waterfront', anchor:'760 Maine Ave SW, Washington, DC 20024', maps:[['The Wharf DC', mapLinks.wharf]], official:'https://www.wharfdc.com/', value:'Modern waterfront D.C. Good for evening walks, dinner, water taxi transfer, and a less museum heavy finish.', valueZh:'D.C. 現代水岸區，適合傍晚散步、晚餐、Water Taxi 轉接，也適合作為不再看博物館的一天收尾。', see:['Transit Pier','District Square Fountain','District Pier','Recreation Pier','Municipal Fish Market','Washington Channel','Evening lights'], advice:'Strongest near golden hour and dinner time.', adviceZh:'黃昏與晚餐時段最有價值。'},
-  {name:'Potomac Water Taxi', area:'Water Route', anchor:'Georgetown Dock, 3100 K St NW. The Wharf Transit Pier, 950 Wharf St SW.', maps:[['Potomac Water Taxi', mapLinks.waterTaxi]], official:'https://www.cityexperiences.com/washington-dc/city-cruises/water-taxi/', value:'Not the cheapest transportation, but a worthwhile scenic transfer between Georgetown and The Wharf.', valueZh:'不是最便宜交通工具，但若要串接 Georgetown 與 The Wharf，是很值得的水上景觀體驗。', see:['Georgetown Waterfront','Kennedy Center','Lincoln Memorial river direction','Washington Monument','Jefferson Memorial','Memorial Bridge','The Wharf waterfront'], advice:'Buy one way. Arrive 15 to 25 minutes early. Prefer upper outdoor seating. Skip it in poor weather.', adviceZh:'買 one way 即可。提早 15 至 25 分鐘到碼頭。優先坐上層戶外。天候差時不要硬搭。'},
+  {
+    name: 'National Mall Memorials',
+    maps: maps.lincoln,
+    pins: [
+      ['Washington Monument', maps.monument],
+      ['WWII Memorial', maps.wwii],
+      ['Reflecting Pool', maps.reflectingPool],
+      ['Lincoln Memorial', maps.lincoln],
+      ['Vietnam Memorial', maps.vietnam],
+      ['Korean Memorial', maps.korean],
+    ],
+    zh: 'D.C. 核心戶外軸線。Washington Monument 到 Lincoln Memorial 實際不短，夏天中午不建議硬走完整段。',
+    best: 'Morning or sunset',
+    see: ['Reflecting Pool', 'Lincoln steps view', 'WWII fountain', 'Vietnam wall', 'Memorial sculptures'],
+  },
+  {
+    name: 'Thomas Jefferson Memorial and Tidal Basin',
+    maps: maps.jefferson,
+    pins: [['Thomas Jefferson Memorial', maps.jefferson]],
+    zh: '黃昏或夜間適合短停留，可拍 Washington Monument 倒影。不必繞 Tidal Basin 完整一圈。',
+    best: 'Sunset or night',
+    see: ['Jefferson statue', 'Tidal Basin water', 'Monument reflection', 'Evening lights'],
+  },
+  {
+    name: 'White House',
+    maps: maps.whiteHouse,
+    pins: [['White House', maps.whiteHouse]],
+    zh: '以外觀拍照與短停留為主。Visitor Center 免費，內容包含白宮歷史文物、互動展示、影片與 store。',
+    best: 'Short stop',
+    see: ['North side', 'South side', 'Visitor Center'],
+  },
+  {
+    name: 'Georgetown',
+    maps: maps.georgetown,
+    pins: [
+      ['Georgetown', maps.georgetown],
+      ['M Street and C&O Canal', maps.mStreetCanal],
+      ['Waterfront Park', maps.waterfrontPark],
+      ['Water Taxi', maps.waterTaxi],
+    ],
+    zh: '可安排半天慢走。街屋、運河、水岸、商店與餐廳集中，節奏不同於 National Mall。',
+    best: 'Late morning to afternoon',
+    see: ['Wisconsin Ave', 'M Street', 'Old Stone House', 'C&O Canal', 'Waterfront Park', 'Key Bridge view'],
+  },
+  {
+    name: 'The Wharf DC',
+    maps: maps.wharf,
+    pins: [['The Wharf DC', maps.wharf]],
+    zh: '現代水岸區，可安排傍晚、晚餐或短程散步。也能銜接 Georgetown water taxi。',
+    best: 'Evening',
+    see: ['Transit Pier', 'District Pier', 'Municipal Fish Market', 'Washington Channel', 'Night lights'],
+  },
+  {
+    name: 'Potomac Water Taxi',
+    maps: maps.waterTaxi,
+    pins: [['Potomac Water Taxi', maps.waterTaxi]],
+    zh: '不是最低成本交通，但 Georgetown 到 The Wharf 可用水上路線銜接。買 one way 即可。',
+    best: 'Clear weather',
+    see: ['Kennedy Center', 'Lincoln river view', 'Washington Monument', 'Jefferson Memorial', 'Memorial Bridge'],
+  },
 ];
 
-const restaurants = [
-  {name:'Old Ebbitt Grill', area:'White House', address:'675 15th Street NW, Washington, DC 20005', maps:mapLinks.oldEbbitt, official:'https://www.ebbitt.com/', type:'Classic D.C. sit down meal', typeZh:'經典 D.C. 正餐', order:'Jumbo Lump Crab Cake, New England Clam Chowder, oysters, seafood', note:'Reserve if possible. Best for a historic meal near the White House.', noteZh:'能訂位就訂。適合在 White House 附近安排有歷史感的一餐。'},
-  {name:'DAIKAYA', area:'Chinatown', address:'705 6th St NW, Washington, DC 20001', maps:mapLinks.daikaya, official:'https://www.daikaya.com/location/daikaya/', type:'Ramen and izakaya split by floor', typeZh:'拉麵與居酒屋分樓層', order:'Shio ramen, shoyu ramen, miso ramen. Second floor is izakaya, not ramen.', note:'For ramen, go to the first floor Ramen Shop.', noteZh:'若目標是拉麵，去一樓 Ramen Shop。'},
-  {name:'Bantam King', area:'Penn Quarter', address:'501 G St NW, Washington, DC 20001', maps:mapLinks.bantamKing, official:'https://www.bantamking.com/', type:'Casual ramen and fried chicken', typeZh:'雞湯拉麵與炸雞', order:'Curry Snow Fried Chicken Plate with dark meat, shio ramen plus nitamago, shoyu ramen, spicy miso ramen, Big Fat Chocolate Chip Cookie', note:'Spicy miso may involve peanuts. Good casual ending near Penn Quarter.', noteZh:'Spicy miso 需注意花生過敏。適合在 Penn Quarter 附近輕鬆收尾。'},
-  {name:'YELLOW Georgetown', area:'Georgetown', address:'1524 Wisconsin Ave NW, Washington, DC 20007', official:'https://www.yellowthecafe.com/georgetown', type:'Levantine café by Michael Rafidi', typeZh:'Michael Rafidi 的 Levantine café', order:'Shakshuka style breakfast, pastries, Smoked Amba Chicken, Shatta Batata, baklava latte, sumac lemonade, Yellow Spro', note:'High quality and higher price. Best for Georgetown brunch or café stop.', noteZh:'品質高，價格也較高。適合 Georgetown 早午餐或咖啡點心。'},
-  {name:'Teaism Penn Quarter', area:'Penn Quarter', address:'400 8th Street NW, Washington, DC 20004', maps:mapLinks.teaism, official:'https://www.teaism.com/restaurants/penn-quarter/', type:'Tea and simple meal break', typeZh:'茶與簡餐休息點', order:'Bento style meals, tea, chai, ochazuke or soba if available, salty oat cookie if available', note:'Useful between National Gallery, American History, and Natural History.', noteZh:'適合穿插在 National Gallery、American History、Natural History 之間當簡單午餐。'},
-  {name:'Founding Farmers Fishers & Bakers', area:'Georgetown Waterfront', address:'3000 K Street NW, Washington, DC 20007', official:'https://www.wearefoundingfarmers.com/location/founding-farmers-fishers-bakers/', type:'Waterfront full meal', typeZh:'水岸正式坐下用餐', order:'Crab Cake Benedict, breakfast, brunch, waterfront lunch, First Bake café', note:'Use when Georgetown needs a proper sit down meal.', noteZh:'適合 Georgetown 行程中需要完整坐下用餐。'},
-  {name:'Dog Tag Bakery', area:'Georgetown', address:'3206 Grace St NW, Washington, DC 20007', official:'https://www.dogtaginc.org/pages/contact-us', type:'Bakery with veteran and military family mission', typeZh:'具退伍軍人與軍眷公益背景的 bakery', order:'Breakfast sandwich, quiche, cinnamon roll, coffee, pastry', note:'Light breakfast or rest stop in Georgetown.', noteZh:'適合 Georgetown 輕早餐或中途休息。'},
-  {name:'Zaytinya', area:'Penn Quarter', address:'701 9th St NW, Washington, DC 20001', official:'https://www.zaytinya.com/', type:'José Andrés meze restaurant', typeZh:'José Andrés 的 meze 餐廳', order:'Pita, hummus, spreads, halloumi, lamb or chicken skewers, octopus, small plates', note:'Best for groups. Solo dining works but limits how many dishes can be ordered.', noteZh:'最適合多人分食。一個人也可吃，但比較難多點。'},
-  {name:'Mars Cafe', area:'Support Stop', address:'Google Maps link provided', maps:mapLinks.marsCafe, type:'Quick café stop', typeZh:'彈性咖啡休息點', order:'Check current menu before going', note:'Kept as a map based backup stop because the provided source is a Google Maps link.', noteZh:'依提供的 Google Maps 連結保留為備用咖啡休息點，出發前再查現場資訊。'},
+const food = [
+  {
+    name: 'Old Ebbitt Grill',
+    maps: maps.oldEbbitt,
+    official: official[15][1],
+    area: 'Near White House',
+    zh: '靠近 White House 的經典餐廳。想安排較正式的一餐，可訂位。',
+    picks: ['Jumbo Lump Crab Cake', 'New England Clam Chowder', 'Oysters', 'Seafood'],
+    mood: 'Classic',
+  },
+  {
+    name: 'DAIKAYA',
+    maps: maps.daikaya,
+    official: official[16][1],
+    area: 'Penn Quarter',
+    zh: '拉麵在一樓 Ramen Shop。二樓是 Izakaya，不是拉麵店。',
+    picks: ['Shio Ramen', 'Shoyu Ramen', 'Miso Ramen'],
+    mood: 'Ramen',
+  },
+  {
+    name: 'Bantam King',
+    maps: maps.bantamKing,
+    official: official[17][1],
+    area: 'Chinatown',
+    zh: '雞湯拉麵與炸雞。適合安排在 Penn Quarter 或 Chinatown 附近收尾。',
+    picks: ['Curry Snow Fried Chicken Plate', 'Shio Ramen with nitamago', 'Shoyu Ramen', 'Spicy Miso Ramen', 'Chocolate Chip Cookie'],
+    mood: 'Casual',
+  },
+  {
+    name: 'YELLOW Georgetown',
+    official: official[18][1],
+    area: 'Georgetown',
+    zh: 'Levantine café。適合 Georgetown 早午餐或咖啡點心，價格偏高。',
+    picks: ['Smoked Amba Chicken', 'Shatta Batata', 'Baklava latte', 'Sumac lemonade', 'Yellow Spro'],
+    mood: 'Cafe',
+  },
+  {
+    name: 'Teaism Penn Quarter',
+    maps: maps.teaism,
+    official: official[19][1],
+    area: 'Penn Quarter',
+    zh: 'National Mall 附近的簡餐與茶選擇，適合博物館中間休息。',
+    picks: ['Bento', 'Tea', 'Chai', 'Ochazuke', 'Soba', 'Salty oat cookie'],
+    mood: 'Light meal',
+  },
+  {
+    name: 'Founding Farmers Fishers & Bakers',
+    official: official[20][1],
+    area: 'Georgetown Waterfront',
+    zh: '水岸完整坐下用餐。適合 Georgetown 行程中段或 brunch。',
+    picks: ['Crab Cake Benedict', 'Breakfast', 'Brunch', 'Waterfront lunch', 'First Bake café'],
+    mood: 'Waterfront',
+  },
+  {
+    name: 'Dog Tag Bakery',
+    official: official[21][1],
+    area: 'Georgetown',
+    zh: '輕早餐、咖啡、點心。也有退伍軍人與軍眷培訓背景。',
+    picks: ['Breakfast sandwich', 'Quiche', 'Cinnamon roll', 'Coffee', 'Pastry'],
+    mood: 'Bakery',
+  },
+  {
+    name: 'Zaytinya',
+    official: official[22][1],
+    area: 'Penn Quarter',
+    zh: '地中海 meze。多人分食最適合，一個人也能吃但較難多點。',
+    picks: ['Pita', 'Hummus', 'Halloumi', 'Chicken skewers', 'Octopus'],
+    mood: 'Dinner',
+  },
+  {
+    name: 'Mars Cafe',
+    maps: maps.marsCafe,
+    area: 'Personal map pin',
+    zh: '已納入地圖連結，保留為可查點位。',
+    picks: ['Google Maps pin'],
+    mood: 'Map pin',
+  },
 ];
 
-const transit = [
-  ['Logan Terminal C', mapLinks.loganC, 'Boston departure anchor', '波士頓出發定位'],
-  ['DCA Terminal 2', mapLinks.dcaT2, 'Washington arrival anchor', 'D.C. 抵達定位'],
+const exactLinks = [
+  ['Logan Terminal C', maps.loganC],
+  ['DCA Terminal 2', maps.dcaT2],
+  ['Teaism Penn Quarter', maps.teaism],
+  ['National Gallery of Art', maps.nga],
+  ['Old Ebbitt Grill', maps.oldEbbitt],
+  ['Thomas Jefferson Memorial', maps.jefferson],
+  ['White House', maps.whiteHouse],
+  ['Washington Monument', maps.monument],
+  ['World War II Memorial', maps.wwii],
+  ['Reflecting Pool', maps.reflectingPool],
+  ['Lincoln Memorial', maps.lincoln],
+  ['Vietnam Memorial', maps.vietnam],
+  ['Korean Memorial', maps.korean],
+  ['Mars Cafe', maps.marsCafe],
+  ['Air and Space Museum', maps.airSpace],
+  ['Library of Congress', maps.loc],
+  ['DAIKAYA', maps.daikaya],
+  ['Georgetown', maps.georgetown],
+  ['M Street and C&O Canal', maps.mStreetCanal],
+  ['Waterfront Park', maps.waterfrontPark],
+  ['Potomac Water Taxi', maps.waterTaxi],
+  ['The Wharf DC', maps.wharf],
+  ['Bantam King', maps.bantamKing],
 ];
 
-const dayLogic = [
-  ['Morning', 'Outdoor memorials or high demand ticketed entry', '早上', '戶外紀念碑，或固定票券景點'],
-  ['Midday', 'Smithsonian museums, National Gallery, Library of Congress', '中午', 'Smithsonian、National Gallery、Library of Congress'],
-  ['Late afternoon', 'Georgetown, Tidal Basin, Water Taxi', '下午後段', 'Georgetown、Tidal Basin、Water Taxi'],
-  ['Evening', 'The Wharf, Jefferson Memorial, Freedom 250 Fair', '晚上', 'The Wharf、Jefferson Memorial、Freedom 250 Fair'],
+const mapZones = [
+  {
+    area: 'NW river',
+    zh: '西北水岸',
+    tone: 'green',
+    places: [
+      ['Georgetown', maps.georgetown],
+      ['M Street and C&O Canal', maps.mStreetCanal],
+      ['Waterfront Park', maps.waterfrontPark],
+      ['Water Taxi', maps.waterTaxi],
+    ],
+  },
+  {
+    area: 'Memorial axis',
+    zh: '紀念碑軸線',
+    tone: 'gold',
+    places: [
+      ['Lincoln', maps.lincoln],
+      ['Vietnam and Korean', maps.vietnam],
+      ['WWII', maps.wwii],
+      ['Washington Monument', maps.monument],
+      ['Reflecting Pool', maps.reflectingPool],
+    ],
+  },
+  {
+    area: 'Central Mall',
+    zh: '博物館核心',
+    tone: 'blue',
+    places: [
+      ['White House', maps.whiteHouse],
+      ['National Gallery', maps.nga],
+      ['Natural History', official[7][1]],
+      ['American History', official[8][1]],
+      ['Air and Space', maps.airSpace],
+    ],
+  },
+  {
+    area: 'Capitol side',
+    zh: '國會東側',
+    tone: 'purple',
+    places: [
+      ['Library of Congress', maps.loc],
+      ['U.S. Capitol', official[3][1]],
+      ['DAIKAYA', maps.daikaya],
+      ['Bantam King', maps.bantamKing],
+    ],
+  },
+  {
+    area: 'South waterfront',
+    zh: '南側水岸',
+    tone: 'red',
+    places: [
+      ['Jefferson Memorial', maps.jefferson],
+      ['The Wharf DC', maps.wharf],
+      ['DCA Terminal 2', maps.dcaT2],
+    ],
+  },
 ];
 
-const rules = [
-  ['Tickets first', 'Check Washington Monument, Air and Space, Library of Congress, Capitol, Holocaust Museum, and NMAAHC before choosing food or neighborhoods.', '先處理票券', '先查 Washington Monument、Air and Space、Library of Congress、Capitol、Holocaust Museum、NMAAHC，再決定餐廳與街區。'],
-  ['Small bag only', 'Avoid knives, scissors, multitools, sprays, glass, large backpacks, selfie sticks, tripods, and luggage.', '小包即可', '不要帶刀具、剪刀、多功能工具、噴霧、玻璃瓶、大型後背包、自拍棒、腳架與行李箱。'],
-  ['Heat logic', 'Do outdoor sights early or late. Put museums in the middle of the day. Use Fair and The Wharf at night.', '高溫邏輯', '戶外排早晚，中午進博物館，Fair 與 The Wharf 優先晚上。'],
-  ['Mall walking', 'Fences and event gates can add 10 to 15 minutes between places that look close on the map.', 'Mall 步行', '圍欄與活動入口可能讓看似很近的點多走 10 至 15 分鐘。'],
-  ['Food areas', 'Safer food clusters are Penn Quarter, Georgetown, The Wharf, Foggy Bottom, and Dupont Circle.', '餐飲區域', '較穩的餐區是 Penn Quarter、Georgetown、The Wharf、Foggy Bottom、Dupont Circle。'],
-];
-
-function Badge({ children, tone = 'blue' }) {
-  const palette = {
-    red: [colors.softRed, colors.red],
-    blue: [colors.softBlue, colors.blue],
-    green: [colors.softGreen, colors.green],
-    gold: [colors.softGold, colors.gold],
-    purple: [colors.softPurple, colors.purple],
-  };
-  const selected = palette[tone] || palette.blue;
-  return <span className="badge" style={{ background: selected[0], color: selected[1] }}>{children}</span>;
-}
-
-function SectionTitle({ eyebrow, title, subtitle }) {
+function JumpNav() {
   return (
-    <div className="sectionTitle">
-      <div className="eyebrow">{eyebrow}</div>
-      <h2>{title}</h2>
-      {subtitle ? <p>{subtitle}</p> : null}
-    </div>
+    <nav className="jumpNav" aria-label="Section navigation">
+      {navItems.map(([id, en, zh]) => (
+        <a key={id} href={`#${id}`}>
+          <span>{en}</span>
+          <small>{zh}</small>
+        </a>
+      ))}
+    </nav>
   );
 }
 
-function LinkButtons({ official, maps, compact = false }) {
+function Section({ id, eyebrow, title, children }) {
   return (
-    <div className={compact ? 'linkRow compactLinks' : 'linkRow'}>
-      {official ? <a href={official} target="_blank" rel="noreferrer">Official</a> : null}
-      {maps ? <a href={maps} target="_blank" rel="noreferrer">Google Maps</a> : null}
-    </div>
-  );
-}
-
-function Bilingual({ en, zh }) {
-  return (
-    <div className="bilingual">
-      <p><b>EN</b>{en}</p>
-      <p><b>中</b>{zh}</p>
-    </div>
-  );
-}
-
-function MiniMap() {
-  const cells = [
-    ['Georgetown', 'Water Taxi', 'The Wharf'],
-    ['White House', 'Monument Core', 'Capitol Hill'],
-    ['Fair Gates', 'Smithsonian', 'Tidal Basin'],
-  ].flat();
-  return (
-    <aside className="miniMap" aria-label="D.C. cluster map">
-      <div className="mapTitle">Cluster view</div>
-      <div className="mapGrid">
-        {cells.map((cell, index) => <span key={cell} className={'mapNode node' + index}>{cell}</span>)}
+    <section className="section" id={id}>
+      <div className="sectionHead">
+        <span>{eyebrow}</span>
+        <h2>{title}</h2>
       </div>
-      <div className="legend">
-        <span><i className="dot redDot" />ticket pressure</span>
-        <span><i className="dot blueDot" />water route</span>
-        <span><i className="dot greenDot" />walkable cluster</span>
-      </div>
-    </aside>
+      {children}
+    </section>
   );
 }
 
-function TicketCard({ item, index }) {
-  const tone = index < 2 ? 'red' : index < 4 ? 'gold' : 'purple';
+function OutLink({ href, children, variant = 'plain' }) {
+  if (!href) return null;
   return (
-    <article className="spotCard" id={item.id}>
-      <div className="cardHead">
+    <a className={`outLink ${variant}`} href={href} target="_blank" rel="noreferrer">
+      {children}
+    </a>
+  );
+}
+
+function ChipList({ items }) {
+  return (
+    <div className="chips">
+      {items.map((item) => (
+        <span key={item}>{item}</span>
+      ))}
+    </div>
+  );
+}
+
+function TicketCard({ item }) {
+  return (
+    <article className="ticketCard">
+      <div className="ticketTop">
+        <b>{item.no}</b>
         <div>
-          <span className="number">{String(index + 1).padStart(2, '0')}</span>
           <h3>{item.name}</h3>
-          <p className="areaLine">{item.area}</p>
+          <p>{item.tag} · {item.zhTag}</p>
         </div>
-        <Badge tone={tone}>{item.status}｜{item.statusZh}</Badge>
       </div>
-
-      <div className="factGrid">
-        <div><b>Address</b><span>{item.address}</span></div>
-        <div><b>Time</b><span>{item.time}</span><small>{item.timeZh}</small></div>
-        <div><b>Ticket</b><span>{item.ticket}</span><small>{item.ticketZh}</small></div>
-      </div>
-
-      <Bilingual en={item.value} zh={item.valueZh} />
-
-      <details className="detailsBlock" open={index < 3}>
-        <summary>Highlights and cautions｜重點與注意事項</summary>
-        <ul className="chipList">{item.see.map((point) => <li key={point}>{point}</li>)}</ul>
-        <Bilingual en={item.caution} zh={item.cautionZh} />
+      <p className="tight">{item.key}</p>
+      <p className="zhLine">{item.zh}</p>
+      <ChipList items={item.see} />
+      <details>
+        <summary>Details 詳細</summary>
+        <p>{item.avoid}</p>
+        <p>{item.avoidZh}</p>
       </details>
-
-      <LinkButtons official={item.official} maps={item.maps} />
+      <div className="cardActions">
+        <OutLink href={item.maps}>Map</OutLink>
+        <OutLink href={item.official}>Official</OutLink>
+      </div>
     </article>
   );
 }
 
 function MuseumCard({ item }) {
   return (
-    <article className="compactCard">
-      <div className="cardHead slim">
-        <div>
-          <h3>{item.name}</h3>
-          <p className="areaLine">{item.area}</p>
-        </div>
-        <Badge tone="green">{item.duration}</Badge>
+    <article className="simpleCard">
+      <div className="miniHead">
+        <h3>{item.name}</h3>
+        <span>{item.time}</span>
       </div>
-      <Bilingual en={item.value} zh={item.valueZh} />
-      <details className="detailsBlock">
-        <summary>What to see｜值得看</summary>
-        <ul className="chipList">{item.see.map((point) => <li key={point}>{point}</li>)}</ul>
-        {item.caution ? <Bilingual en={item.caution} zh={item.cautionZh} /> : null}
-      </details>
-      <div className="addressLine">{item.address}</div>
-      <LinkButtons official={item.official} maps={item.maps} compact />
+      <p>{item.zh}</p>
+      <ChipList items={item.see} />
+      <div className="cardActions">
+        <OutLink href={item.maps}>Map</OutLink>
+        <OutLink href={item.official}>Official</OutLink>
+      </div>
     </article>
   );
 }
 
 function OutdoorCard({ item }) {
   return (
-    <article className="compactCard outdoorCard">
-      <div className="routeLabel">{item.area}</div>
-      <h3>{item.name}</h3>
-      <div className="addressLine">{item.anchor}</div>
-      <Bilingual en={item.value} zh={item.valueZh} />
-      <details className="detailsBlock">
-        <summary>Route notes｜動線提醒</summary>
-        <ul className="chipList">{item.see.map((point) => <li key={point}>{point}</li>)}</ul>
-        <Bilingual en={item.advice} zh={item.adviceZh} />
-      </details>
-      <div className="multiMapLinks">
-        {item.maps?.map(([label, url]) => <a key={label} href={url} target="_blank" rel="noreferrer">{label}</a>)}
-        {item.official ? <a href={item.official} target="_blank" rel="noreferrer">Official</a> : null}
-      </div>
-    </article>
-  );
-}
-
-function RestaurantRow({ item }) {
-  return (
-    <article className="restaurantRow">
-      <div>
+    <article className="visualCard">
+      <div className="miniHead">
         <h3>{item.name}</h3>
-        <p className="areaLine">{item.area}</p>
+        <span>{item.best}</span>
       </div>
-      <div><b>Order</b><span>{item.order}</span></div>
-      <div><b>Use</b><span>{item.type}</span><small>{item.typeZh}</small><small>{item.note}</small><small>{item.noteZh}</small></div>
-      <div className="restaurantLinks">
-        <span>{item.address}</span>
-        <LinkButtons official={item.official} maps={item.maps} compact />
+      <p>{item.zh}</p>
+      <ChipList items={item.see} />
+      <details>
+        <summary>Map pins 地圖點位</summary>
+        <div className="pinList">
+          {item.pins.map(([name, href]) => (
+            <OutLink key={name} href={href}>{name}</OutLink>
+          ))}
+        </div>
+      </details>
+    </article>
+  );
+}
+
+function FoodCard({ item }) {
+  return (
+    <article className="foodCard">
+      <div className="foodTag">{item.mood}</div>
+      <h3>{item.name}</h3>
+      <p className="area">{item.area}</p>
+      <p>{item.zh}</p>
+      <ChipList items={item.picks} />
+      <div className="cardActions">
+        <OutLink href={item.maps}>Map</OutLink>
+        <OutLink href={item.official}>Official</OutLink>
       </div>
     </article>
   );
 }
 
-export default function DCSpotsInfrastructure() {
-  const [foodFilter, setFoodFilter] = useState('all');
-  const filteredRestaurants = useMemo(() => {
-    if (foodFilter === 'all') return restaurants;
-    return restaurants.filter((item) => item.area.toLowerCase().includes(foodFilter));
-  }, [foodFilter]);
+function SchematicMap() {
+  return (
+    <div className="schematicWrap">
+      <div className="mapHeader">
+        <div>
+          <h3>D.C. area map</h3>
+          <p>核心點位按區域整理，適合用來決定當天移動順序。</p>
+        </div>
+        <OutLink href={mapListUrl} variant="solid">Google Maps list</OutLink>
+      </div>
+      <div className="zoneMap" aria-label="D.C. area map grouped by zone">
+        {mapZones.map((zone) => (
+          <article className={`zoneCard ${zone.tone}`} key={zone.area}>
+            <div className="zoneTop">
+              <span>{zone.area}</span>
+              <b>{zone.zh}</b>
+            </div>
+            <div className="zonePlaces">
+              {zone.places.map(([name, href]) => (
+                <a key={name} href={href} target="_blank" rel="noreferrer">{name}</a>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="routeRibbon">
+        <span>Georgetown</span>
+        <i />
+        <span>Memorials</span>
+        <i />
+        <span>Museums</span>
+        <i />
+        <span>Capitol</span>
+        <i />
+        <span>The Wharf</span>
+      </div>
+    </div>
+  );
+}
+
+function FairPanel() {
+  return (
+    <div className="fairPanel">
+      <div className="fairHero">
+        <div>
+          <p className="label">Limited time 期間限定</p>
+          <h3>{fair.name}</h3>
+          <p>{fair.date} · {fair.zhDate}</p>
+          <p>{fair.place} · {fair.zhPlace}</p>
+        </div>
+        <OutLink href={fair.official} variant="solid">Official</OutLink>
+      </div>
+      <div className="fairGrid">
+        <div className="glassBox">
+          <h4>Hours</h4>
+          {fair.hours.map(([day, hour, zh]) => (
+            <div className="rowLine" key={day}>
+              <span>{day}</span>
+              <b>{hour}</b>
+              <small>{zh}</small>
+            </div>
+          ))}
+        </div>
+        <div className="glassBox">
+          <h4>Gates</h4>
+          <ChipList items={fair.gates} />
+        </div>
+        <div className="glassBox wide">
+          <h4>Best use</h4>
+          <p>{fair.zh}</p>
+          <ChipList items={fair.see} />
+        </div>
+        <div className="glassBox wide">
+          <h4>Food</h4>
+          <ChipList items={fair.foods} />
+          <OutLink href={fair.food}>Food official</OutLink>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LinkGrid() {
+  return (
+    <div className="linkGrid">
+      {exactLinks.map(([name, href]) => (
+        <OutLink key={name} href={href}>{name}</OutLink>
+      ))}
+    </div>
+  );
+}
+
+function SourceGrid() {
+  return (
+    <details className="sourcesBox">
+      <summary>Official sources 官方來源</summary>
+      <div className="sourceGrid">
+        {official.map(([name, href]) => (
+          <OutLink key={name} href={href}>{name}</OutLink>
+        ))}
+      </div>
+    </details>
+  );
+}
+
+function DCSpotsInfrastructure() {
+  const [foodFilter, setFoodFilter] = useState('All');
+  const foodTypes = useMemo(() => ['All', ...Array.from(new Set(food.map((item) => item.mood)))], []);
+  const filteredFood = foodFilter === 'All' ? food : food.filter((item) => item.mood === foodFilter);
 
   return (
-    <main className="dcGuide">
-      <style>{`
-        .dcGuide { min-height: 100vh; background: ${colors.bg}; color: ${colors.ink}; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 16px; line-height: 1.58; }
-        .dcGuide * { box-sizing: border-box; }
-        .dcGuide a { color: ${colors.navy}; text-underline-offset: 3px; text-decoration-thickness: 1px; overflow-wrap: anywhere; }
-        .hero { max-width: 1180px; margin: 0 auto; padding: 34px 18px 22px; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.85fr); gap: 18px; align-items: stretch; }
-        .heroPanel, .miniMap, .spotCard, .compactCard, .fairPanel, .logicCard, .ruleCard, .sourceCard { background: ${colors.card}; border: 1px solid ${colors.line}; border-radius: 28px; box-shadow: 0 16px 42px rgba(64, 43, 22, 0.055); }
-        .heroPanel { padding: clamp(24px, 5vw, 54px); position: relative; overflow: hidden; }
-        .heroPanel:after { content: ""; position: absolute; width: 240px; height: 240px; right: -90px; top: -90px; border-radius: 999px; background: ${colors.softGold}; z-index: 0; }
-        .heroPanel > * { position: relative; z-index: 1; }
-        .eyebrow { color: ${colors.red}; font-size: 0.78rem; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase; }
-        h1 { font-size: clamp(3rem, 10vw, 7.4rem); line-height: 0.86; letter-spacing: -0.075em; margin: 18px 0; max-width: 780px; }
-        h2 { font-size: clamp(1.7rem, 5vw, 3.2rem); line-height: 1.02; letter-spacing: -0.055em; margin: 8px 0 10px; }
-        h3 { font-size: clamp(1.05rem, 2vw, 1.32rem); line-height: 1.14; letter-spacing: -0.025em; margin: 0; }
-        p { margin: 0.55rem 0; }
-        .lead { max-width: 720px; font-size: clamp(1rem, 2.2vw, 1.32rem); color: ${colors.ink}; }
-        .heroMeta { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
-        .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 7px 10px; font-size: 0.78rem; line-height: 1.1; font-weight: 800; white-space: nowrap; }
-        .miniMap { padding: 18px; }
-        .mapTitle { font-weight: 900; color: ${colors.navy}; margin-bottom: 10px; }
-        .mapGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; min-height: 292px; border-radius: 22px; border: 1px dashed ${colors.line}; background: radial-gradient(circle at 50% 44%, #EFE3CF, transparent 58%); }
-        .mapNode { display: flex; align-items: center; justify-content: center; text-align: center; min-height: 78px; padding: 8px; border-radius: 18px; border: 1px solid ${colors.line}; background: ${colors.card2}; font-size: 0.84rem; font-weight: 850; }
-        .node1 { background: ${colors.softBlue}; }
-        .node3, .node4, .node5 { background: ${colors.softRed}; }
-        .node0, .node2, .node6, .node7, .node8 { background: ${colors.softGreen}; }
-        .legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; color: ${colors.muted}; font-size: 0.78rem; }
-        .legend span { display: inline-flex; align-items: center; gap: 5px; }
-        .dot { width: 9px; height: 9px; border-radius: 999px; display: inline-block; }
-        .redDot { background: ${colors.red}; } .blueDot { background: ${colors.blue}; } .greenDot { background: ${colors.green}; }
-        .stickyNav { position: sticky; top: 0; z-index: 20; border-top: 1px solid ${colors.line}; border-bottom: 1px solid ${colors.line}; background: rgba(252, 250, 242, 0.94); backdrop-filter: blur(16px); }
-        .stickyInner { max-width: 1180px; margin: 0 auto; padding: 9px 18px; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
-        .stickyInner a { flex: 0 0 auto; text-decoration: none; background: ${colors.card}; border: 1px solid ${colors.line}; border-radius: 999px; padding: 7px 11px; font-size: 0.84rem; font-weight: 800; color: ${colors.ink}; }
-        .content { max-width: 1180px; margin: 0 auto; padding: 18px; }
-        .section { margin: 30px 0 48px; scroll-margin-top: 76px; }
-        .sectionTitle { max-width: 860px; margin-bottom: 16px; }
-        .sectionTitle p { color: ${colors.muted}; font-size: 1rem; }
-        .priorityGrid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
-        .priorityCard { text-decoration: none; color: inherit; background: ${colors.card}; border: 1px solid ${colors.line}; border-radius: 22px; padding: 13px; min-height: 138px; display: flex; flex-direction: column; gap: 6px; }
-        .priorityCard strong { color: ${colors.red}; font-size: 1.45rem; line-height: 1; }
-        .priorityCard span { font-weight: 850; line-height: 1.18; }
-        .priorityCard small { color: ${colors.muted}; line-height: 1.35; }
-        .logicGrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-        .logicCard { padding: 15px; }
-        .logicCard strong { color: ${colors.green}; display: block; margin-bottom: 4px; }
-        .ticketStack { display: grid; gap: 16px; }
-        .spotCard, .compactCard, .fairPanel, .sourceCard { padding: clamp(16px, 3vw, 26px); }
-        .cardHead { display: flex; justify-content: space-between; gap: 14px; align-items: flex-start; margin-bottom: 14px; }
-        .cardHead.slim { align-items: center; }
-        .number { display: inline-block; color: ${colors.red}; font-weight: 950; margin-bottom: 6px; letter-spacing: 0.04em; }
-        .areaLine, .addressLine { color: ${colors.muted}; font-size: 0.9rem; margin-top: 5px; }
-        .factGrid { display: grid; grid-template-columns: 0.82fr 1fr 1.1fr; gap: 10px; margin: 12px 0; }
-        .factGrid > div, .addressLine, .detailsBlock { background: ${colors.card2}; border: 1px solid ${colors.line}; border-radius: 18px; padding: 12px; }
-        b { font-size: 0.78rem; letter-spacing: 0.035em; text-transform: uppercase; }
-        .factGrid span, .factGrid small, .restaurantRow span, .restaurantRow small { display: block; color: ${colors.muted}; margin-top: 4px; }
-        .bilingual { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
-        .bilingual p { margin: 0; padding: 12px; border-left: 3px solid ${colors.line}; background: rgba(255, 253, 248, 0.7); border-radius: 12px; }
-        .bilingual b { display: inline-flex; min-width: 30px; color: ${colors.red}; margin-right: 7px; }
-        .detailsBlock { margin: 12px 0; }
-        .detailsBlock summary { cursor: pointer; font-weight: 900; color: ${colors.navy}; }
-        .chipList { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 7px; }
-        .chipList li { background: ${colors.card}; border: 1px solid ${colors.line}; border-radius: 999px; padding: 7px 10px; font-size: 0.88rem; font-weight: 750; }
-        .linkRow, .multiMapLinks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-        .linkRow a, .multiMapLinks a { text-decoration: none; border-radius: 999px; padding: 8px 11px; border: 1px solid ${colors.line}; background: ${colors.ink}; color: #fff; font-size: 0.84rem; font-weight: 850; }
-        .compactLinks { margin-top: 8px; }
-        .compactLinks a { background: ${colors.card}; color: ${colors.navy}; }
-        .fairPanel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr); gap: 18px; }
-        .infoGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 13px 0; }
-        .infoBox { background: ${colors.card2}; border: 1px solid ${colors.line}; border-radius: 18px; padding: 12px; }
-        .hoursTable { width: 100%; border-collapse: separate; border-spacing: 0 7px; }
-        .hoursTable td { background: ${colors.card2}; padding: 9px; border-top: 1px solid ${colors.line}; border-bottom: 1px solid ${colors.line}; }
-        .hoursTable td:first-child { border-left: 1px solid ${colors.line}; border-radius: 14px 0 0 14px; font-weight: 850; }
-        .hoursTable td:last-child { border-right: 1px solid ${colors.line}; border-radius: 0 14px 14px 0; color: ${colors.muted}; }
-        .cardGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-        .routeLabel { color: ${colors.green}; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.78rem; margin-bottom: 7px; }
-        .restaurantControls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 13px; }
-        .restaurantControls button { border: 1px solid ${colors.line}; background: ${colors.card}; color: ${colors.ink}; border-radius: 999px; padding: 8px 12px; font-weight: 850; cursor: pointer; }
-        .restaurantControls button.active { background: ${colors.navy}; color: #fff; border-color: ${colors.navy}; }
-        .restaurantTable { display: grid; gap: 10px; }
-        .restaurantRow { display: grid; grid-template-columns: 0.8fr 1fr 1fr 0.85fr; gap: 12px; background: ${colors.card}; border: 1px solid ${colors.line}; border-radius: 22px; padding: 14px; }
-        .restaurantLinks .linkRow { margin-top: 8px; }
-        .ruleGrid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
-        .ruleCard { padding: 14px; }
-        .ruleCard h3 { color: ${colors.red}; font-size: 1rem; margin-bottom: 6px; }
-        .sourceGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-        .sourceCard { padding: 11px; border-radius: 16px; box-shadow: none; }
-        .sourceCard strong { display: block; margin-bottom: 3px; color: ${colors.ink}; }
-        .footerNote { color: ${colors.muted}; margin: 20px 0 80px; font-size: 0.92rem; }
-        .mapListFab { position: fixed; right: 18px; bottom: 18px; z-index: 30; display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 12px 15px; background: ${colors.red}; color: #fff !important; text-decoration: none; font-weight: 900; box-shadow: 0 18px 36px rgba(203, 64, 66, 0.28); }
-        @media (max-width: 980px) {
-          .hero, .fairPanel { grid-template-columns: 1fr; }
-          .priorityGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-          .logicGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-          .factGrid, .restaurantRow { grid-template-columns: 1fr; }
-          .ruleGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        }
-        @media (max-width: 680px) {
-          .dcGuide { font-size: 15px; }
-          .hero { padding: 18px 12px 12px; }
-          .content { padding: 12px; }
-          .heroPanel, .miniMap, .spotCard, .compactCard, .fairPanel { border-radius: 22px; }
-          h1 { font-size: clamp(3.1rem, 18vw, 5.2rem); }
-          .lead { font-size: 1rem; }
-          .mapGrid { grid-template-columns: 1fr; min-height: auto; }
-          .mapNode { min-height: 42px; }
-          .priorityGrid, .logicGrid, .cardGrid, .bilingual, .infoGrid, .sourceGrid, .ruleGrid { grid-template-columns: 1fr; }
-          .cardHead { flex-direction: column; }
-          .stickyInner { padding: 8px 12px; }
-          .stickyInner a { font-size: 0.8rem; padding: 7px 10px; }
-          .mapListFab { right: 12px; bottom: 12px; padding: 11px 13px; font-size: 0.86rem; }
-        }
-        @media print {
-          .stickyNav, .mapListFab, .restaurantControls { display: none; }
-          .dcGuide { background: #fff; }
-          .heroPanel, .miniMap, .spotCard, .compactCard, .fairPanel, .logicCard, .ruleCard { box-shadow: none; break-inside: avoid; }
-        }
-      `}</style>
-
-      <a className="mapListFab" href={googleMapList} target="_blank" rel="noreferrer">Google Maps List</a>
+    <main className="dcPage">
+      <style>{css}</style>
+      <a className="floatingMap" href={mapListUrl} target="_blank" rel="noreferrer">Maps</a>
 
       <header className="hero">
-        <section className="heroPanel">
-          <div className="eyebrow">DC Spots</div>
+        <div className="heroText">
+          <p className="kicker">Washington, D.C.</p>
           <h1>D.C. 2026</h1>
-          <p className="lead">Ticket pressure, museum choices, outdoor clusters, food, and exact map links for a short Washington, D.C. visit.</p>
-          <p className="lead">中英同步。先看票券，再看區域。夏天中午少走戶外，晚上再安排 Fair、The Wharf 或 Tidal Basin。</p>
-          <div className="heroMeta">
-            <Badge tone="red">Updated｜2026.07.08</Badge>
-            <Badge tone="gold">Background｜#FCFAF2</Badge>
-            <Badge tone="green">Mobile first｜手機優先</Badge>
+          <div className="heroBadges">
+            <span>Tickets first</span>
+            <span>National Mall</span>
+            <span>Georgetown</span>
+            <span>The Wharf</span>
           </div>
-        </section>
-        <MiniMap />
+        </div>
+        <div className="heroCard">
+          <span className="bigNo">04</span>
+          <p>票券優先</p>
+          <b>Monument · Air and Space · LOC · Capitol</b>
+        </div>
       </header>
 
-      <nav className="stickyNav" aria-label="D.C. guide sections">
-        <div className="stickyInner">
-          <a href="#priority">Priority</a>
-          <a href="#logic">Day Logic</a>
-          <a href="#tickets">Timed Entry</a>
-          <a href="#fair">Freedom 250</a>
-          <a href="#museums">Museums</a>
-          <a href="#outdoor">Outdoor</a>
-          <a href="#food">Food</a>
-          <a href="#maps">Maps</a>
-          <a href="#rules">Rules</a>
+      <JumpNav />
+
+      <section className="priorityStrip" aria-label="Quick rules">
+        <div><b>10:00</b><span>Monument 30 day release</span><small>華盛頓紀念碑 30 天前票</small></div>
+        <div><b>3:00</b><span>Monument day before</span><small>前一日票</small></div>
+        <div><b>9:00</b><span>LOC same day</span><small>國會圖書館當日票</small></div>
+        <div><b>PM</b><span>Fair or waterfront</span><small>晚上排 Fair 或水岸</small></div>
+      </section>
+
+      <Section id="map" eyebrow="01" title="Map view">
+        <SchematicMap />
+      </Section>
+
+      <Section id="tickets" eyebrow="02" title="Tickets first">
+        <div className="ticketGrid">
+          {ticketCards.map((item) => <TicketCard key={item.name} item={item} />)}
         </div>
-      </nav>
+      </Section>
 
-      <div className="content">
-        <section className="section" id="priority">
-          <SectionTitle eyebrow="Start here" title="Ticket pressure" subtitle="If nothing is reserved yet, check these first. Missing one can change the whole day." />
-          <div className="priorityGrid">
-            {priority.map((item) => (
-              <a className="priorityCard" href={item[4]} key={item[0]}>
-                <strong>{item[0]}</strong>
-                <span>{item[1]}</span>
-                <small>{item[2]}</small>
-                <small>{item[3]}</small>
-              </a>
-            ))}
-          </div>
-        </section>
+      <Section id="fair" eyebrow="03" title="Freedom 250 Fair">
+        <FairPanel />
+      </Section>
 
-        <section className="section" id="logic">
-          <SectionTitle eyebrow="Visual planning" title="Simple day logic" subtitle="Use this as a fast reading layer before opening the detailed cards." />
-          <div className="logicGrid">
-            {dayLogic.map((item) => (
-              <article className="logicCard" key={item[0]}>
-                <strong>{item[0]}｜{item[2]}</strong>
-                <p>{item[1]}</p>
-                <p>{item[3]}</p>
-              </article>
-            ))}
-          </div>
-        </section>
+      <Section id="museums" eyebrow="04" title="Free museums">
+        <div className="cardGrid">
+          {museums.map((item) => <MuseumCard key={item.name} item={item} />)}
+        </div>
+      </Section>
 
-        <section className="section" id="tickets">
-          <SectionTitle eyebrow="Timed entry" title="Places to reserve or check first" subtitle="Addresses, official links, exact map links, ticket notes, and real visit value." />
-          <div className="ticketStack">
-            {ticketedSpots.map((item, index) => <TicketCard key={item.id} item={item} index={index} />)}
-          </div>
-        </section>
+      <Section id="outdoors" eyebrow="05" title="Outdoor clusters">
+        <div className="cardGrid two">
+          {outdoor.map((item) => <OutdoorCard key={item.name} item={item} />)}
+        </div>
+      </Section>
 
-        <section className="section" id="fair">
-          <SectionTitle eyebrow="Limited event" title="Freedom 250 Great American State Fair" subtitle="A temporary National Mall event. It affects routes, food choices, security gates, and crowd flow." />
-          <div className="fairPanel">
-            <div>
-              <h3>{fair.name}</h3>
-              <div className="infoGrid">
-                <div className="infoBox"><b>Dates</b><p>{fair.dates}</p><p>{fair.datesZh}</p></div>
-                <div className="infoBox"><b>Location</b><p>{fair.location}</p><p>{fair.locationZh}</p></div>
-              </div>
-              <table className="hoursTable"><tbody>{fair.hours.map((row) => <tr key={row[0]}><td>{row[0]}<br />{row[2]}</td><td>{row[1]}</td></tr>)}</tbody></table>
-              <Bilingual en={fair.caution} zh={fair.cautionZh} />
-              <LinkButtons official={fair.official} />
-              <div className="linkRow compactLinks"><a href={fair.foodOfficial} target="_blank" rel="noreferrer">Food source</a></div>
-            </div>
-            <div>
-              <div className="infoBox"><b>Gates</b><ul>{fair.gates.map((gate) => <li key={gate}>{gate}</li>)}</ul></div>
-              <div className="infoBox"><b>Highlights</b><ul className="chipList">{fair.highlights.map((point) => <li key={point}>{point}</li>)}</ul></div>
-              <div className="infoBox"><b>Food snapshot</b><ul className="chipList">{fair.food.map((food) => <li key={food}>{food}</li>)}</ul></div>
-            </div>
-          </div>
-        </section>
+      <Section id="food" eyebrow="06" title="Food picks">
+        <div className="filterRow">
+          {foodTypes.map((type) => (
+            <button key={type} type="button" className={foodFilter === type ? 'active' : ''} onClick={() => setFoodFilter(type)}>
+              {type}
+            </button>
+          ))}
+        </div>
+        <div className="foodGrid">
+          {filteredFood.map((item) => <FoodCard key={item.name} item={item} />)}
+        </div>
+      </Section>
 
-        <section className="section" id="museums">
-          <SectionTitle eyebrow="Flexible museums" title="Free museums for heat, rain, and schedule buffers" subtitle="Do not try to finish every museum. Pick by interest and energy." />
-          <div className="cardGrid">
-            {museums.map((item) => <MuseumCard key={item.name} item={item} />)}
-          </div>
-        </section>
+      <Section id="links" eyebrow="07" title="Exact map links">
+        <LinkGrid />
+        <SourceGrid />
+      </Section>
 
-        <section className="section" id="outdoor">
-          <SectionTitle eyebrow="City clusters" title="Outdoor sights, neighborhoods, and water route" subtitle="Read these as clusters, not isolated checkboxes." />
-          <div className="cardGrid">
-            {outdoor.map((item) => <OutdoorCard key={item.name} item={item} />)}
-          </div>
-        </section>
-
-        <section className="section" id="food">
-          <SectionTitle eyebrow="Food" title="Restaurants and café picks" subtitle="Choose by area first. That prevents wasted walking around the Mall." />
-          <div className="restaurantControls">
-            {[['all', 'All'], ['georgetown', 'Georgetown'], ['penn', 'Penn Quarter'], ['white', 'White House'], ['chinatown', 'Chinatown'], ['support', 'Support Stop']].map(([key, label]) => <button type="button" key={key} className={foodFilter === key ? 'active' : ''} onClick={() => setFoodFilter(key)}>{label}</button>)}
-          </div>
-          <div className="restaurantTable">
-            {filteredRestaurants.map((item) => <RestaurantRow item={item} key={item.name} />)}
-          </div>
-        </section>
-
-        <section className="section" id="maps">
-          <SectionTitle eyebrow="Exact maps" title="Map anchors" subtitle="The bottom right button opens the full Google Maps spot list. These are the individual anchors added from the provided links." />
-          <div className="cardGrid">
-            <article className="compactCard">
-              <h3>Transport</h3>
-              <div className="multiMapLinks">{transit.map(([label, url, en, zh]) => <a key={label} href={url} target="_blank" rel="noreferrer">{label}<br />{en}｜{zh}</a>)}</div>
-            </article>
-            <article className="compactCard">
-              <h3>Full list</h3>
-              <p>Guide on mobile.</p>
-              <p>清單</p>
-              <div className="linkRow"><a href={googleMapList} target="_blank" rel="noreferrer">Google Maps Spots List</a></div>
-            </article>
-          </div>
-        </section>
-
-        <section className="section" id="rules">
-          <SectionTitle eyebrow="Practical rules" title="Avoid the common D.C. mistakes" subtitle="Short rules for readers using this on the move." />
-          <div className="ruleGrid">
-            {rules.map((rule) => (
-              <article className="ruleCard" key={rule[0]}>
-                <h3>{rule[0]}</h3>
-                <p>{rule[2]}</p>
-                <p>{rule[1]}</p>
-                <p>{rule[3]}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="section" id="sources">
-          <SectionTitle eyebrow="Sources" title="Official links" subtitle="Check same day opening status, pass inventory, weather, and security rules before leaving." />
-          <div className="sourceGrid">
-            {officialSources.map(([label, url]) => <a className="sourceCard" key={url} href={url} target="_blank" rel="noreferrer"><strong>{label}</strong>{url}</a>)}
-          </div>
-          <p className="footerNote">No lodging information included. Content check date: July 8, 2026. Exact day operations may change.</p>
-        </section>
-      </div>
+      <section className="rulesPanel">
+        <h2>Practical rules 實用規則</h2>
+        <div className="rulesGrid">
+          <div><b>Bag</b><p>小包。不要帶刀具、剪刀、多功能工具、玻璃瓶、噴霧、自拍棒、tripod 或行李箱。</p></div>
+          <div><b>Heat</b><p>夏天中午少走 National Mall。戶外排早上或傍晚，中午排博物館。</p></div>
+          <div><b>Storm</b><p>午後雷雨常見。Water Taxi 與戶外行程保留備案。</p></div>
+          <div><b>Food</b><p>National Mall 食物偏活動場地價。穩定餐區看 Penn Quarter、Georgetown、The Wharf。</p></div>
+        </div>
+      </section>
     </main>
   );
 }
+
+const css = `
+:root {
+  --bg: #FCFAF2;
+  --ink: #24211D;
+  --muted: #4C453D;
+  --soft: #6B6258;
+  --line: #E7D9C3;
+  --card: #FFFDF8;
+  --paper: #F7F0E3;
+  --red: #CB4042;
+  --blue: #58B2DC;
+  --green: #5DAC81;
+  --gold: #D9A62E;
+  --navy: #0F2540;
+  --purple: #8F77B5;
+  --shadow: 0 24px 80px rgba(35, 29, 20, 0.10);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); }
+a { color: inherit; }
+button { font: inherit; }
+
+.dcPage {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(217, 166, 46, 0.18), transparent 34rem),
+    radial-gradient(circle at 80% 18%, rgba(88, 178, 220, 0.16), transparent 30rem),
+    var(--bg);
+  padding: 24px;
+}
+
+.hero,
+.section,
+.rulesPanel {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: stretch;
+  padding: 44px 0 18px;
+}
+
+.heroText {
+  background: linear-gradient(135deg, rgba(255, 253, 248, 0.92), rgba(247, 240, 227, 0.82));
+  border: 1px solid rgba(231, 217, 195, 0.9);
+  border-radius: 34px;
+  padding: clamp(28px, 6vw, 56px);
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.heroText::after {
+  content: "";
+  position: absolute;
+  width: 240px;
+  height: 240px;
+  right: -90px;
+  top: -90px;
+  border-radius: 50%;
+  background: rgba(203, 64, 66, 0.10);
+}
+
+.kicker,
+.label {
+  margin: 0 0 10px;
+  color: var(--red);
+  font-size: 0.86rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+h1, h2, h3, h4, p { margin-top: 0; }
+
+h1 {
+  font-size: clamp(3.2rem, 11vw, 8rem);
+  line-height: 0.88;
+  letter-spacing: -0.08em;
+  margin: 0 0 18px;
+}
+
+
+.heroBadges,
+.chips,
+.cardActions,
+.filterRow,
+.pinList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.heroBadges span,
+.chips span,
+.filterRow button,
+.outLink {
+  border: 1px solid var(--line);
+  background: rgba(255, 253, 248, 0.85);
+  border-radius: 999px;
+  padding: 8px 11px;
+  font-size: 0.9rem;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.heroCard {
+  border-radius: 34px;
+  padding: 28px;
+  background: var(--navy);
+  color: #FFFDF8;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 260px;
+}
+
+.bigNo {
+  font-size: 5.6rem;
+  line-height: 0.9;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  color: #F4C45F;
+}
+
+.heroCard p {
+  margin: 18px 0 8px;
+  color: rgba(255, 253, 248, 0.9);
+}
+
+.heroCard b { line-height: 1.35; }
+
+.jumpNav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  max-width: 1180px;
+  margin: 0 auto 24px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(231, 217, 195, 0.86);
+  background: rgba(252, 250, 242, 0.88);
+  backdrop-filter: blur(16px);
+  border-radius: 24px;
+}
+
+.jumpNav a {
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 8px;
+  border-radius: 16px;
+  color: var(--soft);
+}
+
+.jumpNav a:hover {
+  background: var(--card);
+  color: var(--ink);
+}
+
+.jumpNav span {
+  display: block;
+  font-weight: 850;
+  font-size: 0.9rem;
+}
+
+.jumpNav small {
+  display: block;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.priorityStrip {
+  max-width: 1180px;
+  margin: 0 auto 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.priorityStrip div {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: rgba(255, 253, 248, 0.84);
+}
+
+.priorityStrip b {
+  display: block;
+  font-size: 1.5rem;
+  letter-spacing: -0.04em;
+}
+
+.priorityStrip span,
+.priorityStrip small {
+  display: block;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.priorityStrip span { font-weight: 800; color: var(--ink); }
+.priorityStrip small { margin-top: 4px; }
+
+.section {
+  padding: 34px 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.sectionHead span {
+  min-width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 900;
+}
+
+.sectionHead h2 {
+  margin: 0;
+  font-size: clamp(1.65rem, 4vw, 3.4rem);
+  letter-spacing: -0.06em;
+}
+
+.schematicWrap,
+.fairPanel,
+.rulesPanel {
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: rgba(255, 253, 248, 0.86);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.schematicWrap {
+  border: 1px solid var(--line);
+  border-radius: 32px;
+  background: rgba(255, 253, 248, 0.9);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  padding: 18px;
+}
+
+.mapHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 6px 6px 16px;
+}
+
+.mapHeader h3 {
+  margin: 0 0 4px;
+  font-size: clamp(1.45rem, 3vw, 2.35rem);
+  letter-spacing: -0.055em;
+}
+
+.mapHeader p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.zoneMap {
+  display: grid;
+  grid-template-columns: 1.05fr 1.25fr 1.35fr 1.1fr 1.05fr;
+  gap: 12px;
+  position: relative;
+}
+
+.zoneMap::before {
+  content: "Potomac / National Mall flow";
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 50%;
+  height: 18px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(88, 178, 220, 0.2), rgba(217, 166, 46, 0.22), rgba(88, 178, 220, 0.16));
+  color: rgba(36, 33, 29, 0.45);
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.zoneCard {
+  position: relative;
+  z-index: 1;
+  min-height: 280px;
+  border-radius: 26px;
+  padding: 16px;
+  border: 1px solid rgba(231, 217, 195, 0.95);
+  background: #FFFDF8;
+  box-shadow: 0 14px 40px rgba(35, 29, 20, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.zoneCard.green { background: linear-gradient(180deg, rgba(93, 172, 129, 0.14), #FFFDF8 56%); }
+.zoneCard.gold { background: linear-gradient(180deg, rgba(217, 166, 46, 0.18), #FFFDF8 56%); }
+.zoneCard.blue { background: linear-gradient(180deg, rgba(88, 178, 220, 0.16), #FFFDF8 56%); }
+.zoneCard.purple { background: linear-gradient(180deg, rgba(143, 119, 181, 0.14), #FFFDF8 56%); }
+.zoneCard.red { background: linear-gradient(180deg, rgba(203, 64, 66, 0.12), #FFFDF8 56%); }
+
+.zoneTop span {
+  display: block;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+}
+
+.zoneTop b {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.zonePlaces {
+  display: grid;
+  gap: 8px;
+}
+
+.zonePlaces a {
+  text-decoration: none;
+  color: var(--ink);
+  background: rgba(255, 253, 248, 0.9);
+  border: 1px solid rgba(231, 217, 195, 0.95);
+  border-radius: 16px;
+  padding: 10px 11px;
+  font-size: 0.96rem;
+  font-weight: 780;
+  line-height: 1.22;
+}
+
+.zonePlaces a:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.routeRibbon {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr auto 1fr auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 22px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-weight: 850;
+  font-size: 0.94rem;
+}
+
+.routeRibbon i {
+  height: 2px;
+  background: rgba(36, 33, 29, 0.22);
+  border-radius: 999px;
+}
+
+.ticketGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.cardGrid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.foodGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.ticketCard,
+.simpleCard,
+.visualCard,
+.foodCard,
+.glassBox,
+.rulesGrid div {
+  border: 1px solid var(--line);
+  background: rgba(255, 253, 248, 0.88);
+  border-radius: 26px;
+  padding: 18px;
+  box-shadow: 0 14px 40px rgba(35, 29, 20, 0.06);
+}
+
+.ticketTop {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.ticketTop b {
+  height: 42px;
+  width: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--red);
+  color: #fff;
+}
+
+.ticketTop h3,
+.simpleCard h3,
+.visualCard h3,
+.foodCard h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  line-height: 1.18;
+  letter-spacing: -0.035em;
+}
+
+.ticketTop p,
+.area,
+.miniHead span {
+  margin: 4px 0 0;
+  color: var(--soft);
+  font-size: 0.92rem;
+  font-weight: 760;
+}
+
+.tight,
+.zhLine,
+.simpleCard p,
+.visualCard p,
+.foodCard p,
+.rulesGrid p,
+details p {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.zhLine { color: #3F3A34; }
+
+.miniHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.miniHead span {
+  flex: 0 0 auto;
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  margin: 0;
+  max-width: 48%;
+  text-align: right;
+}
+
+.chips {
+  margin: 12px 0;
+}
+
+.chips span {
+  background: var(--paper);
+  color: #3D3832;
+  line-height: 1.25;
+}
+
+.cardActions { margin-top: 14px; }
+.outLink:hover, .filterRow button:hover { border-color: var(--red); color: var(--red); }
+.outLink.solid {
+  background: var(--ink);
+  color: var(--bg);
+  border-color: var(--ink);
+  width: fit-content;
+}
+.outLink.solid:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+details {
+  margin-top: 12px;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 850;
+  color: var(--ink);
+}
+
+.fairPanel { padding: 18px; }
+.fairHero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(203, 64, 66, 0.10), rgba(217, 166, 46, 0.14));
+  margin-bottom: 14px;
+}
+.fairHero h3 { margin: 0 0 8px; font-size: clamp(1.5rem, 3vw, 2.6rem); letter-spacing: -0.06em; }
+.fairHero p { margin-bottom: 4px; color: var(--muted); }
+.fairGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.glassBox.wide { grid-column: span 2; }
+.glassBox h4 { margin-bottom: 12px; font-size: 1rem; }
+.rowLine {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 0.8fr;
+  gap: 8px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+.rowLine:last-child { border-bottom: 0; }
+.rowLine span, .rowLine small { color: var(--muted); }
+.rowLine b { font-size: 0.94rem; }
+
+.filterRow { margin-bottom: 14px; }
+.filterRow button {
+  cursor: pointer;
+  color: var(--soft);
+}
+.filterRow button.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.foodCard { position: relative; overflow: hidden; }
+.foodCard::before {
+  content: "";
+  position: absolute;
+  width: 86px;
+  height: 86px;
+  right: -26px;
+  top: -26px;
+  border-radius: 50%;
+  background: rgba(88, 178, 220, 0.16);
+}
+.foodTag {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 7px 9px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 850;
+}
+
+.linkGrid,
+.sourceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+.linkGrid .outLink,
+.sourceGrid .outLink {
+  border-radius: 18px;
+  line-height: 1.25;
+  padding: 12px;
+  background: rgba(255, 253, 248, 0.9);
+}
+.sourcesBox {
+  max-width: 1180px;
+  margin: 18px auto 0;
+  border: 1px solid var(--line);
+  background: rgba(255, 253, 248, 0.7);
+  border-radius: 22px;
+  padding: 16px;
+}
+.sourcesBox summary { margin-bottom: 12px; }
+
+.rulesPanel {
+  margin-top: 28px;
+  padding: 22px;
+}
+.rulesPanel h2 { font-size: clamp(1.5rem, 4vw, 2.8rem); letter-spacing: -0.06em; }
+.rulesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.rulesGrid b { display: block; font-size: 1.1rem; margin-bottom: 8px; }
+.rulesGrid p { margin-bottom: 0; }
+
+.floatingMap {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 40;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 13px 16px;
+  background: var(--red);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 16px 40px rgba(203, 64, 66, 0.28);
+}
+
+@media (max-width: 1060px) {
+  .hero { grid-template-columns: 1fr; }
+  .heroCard { min-height: auto; }
+  .zoneMap { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .zoneMap::before { display: none; }
+  .ticketGrid, .foodGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cardGrid, .cardGrid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .linkGrid, .sourceGrid, .rulesGrid, .priorityStrip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 720px) {
+  .dcPage { padding: 14px; }
+  :root { font-size: 17px; }
+  .zoneMap { grid-template-columns: 1fr; }
+  .zoneCard { min-height: auto; }
+  .routeRibbon { display: none; }
+  .mapHeader { display: block; }
+  .mapHeader .outLink { margin-top: 12px; display: inline-flex; }
+  .hero { padding-top: 18px; gap: 12px; }
+  .heroText { border-radius: 26px; padding: 26px; }
+  .heroCard { border-radius: 26px; padding: 22px; }
+  .bigNo { font-size: 4rem; }
+  .jumpNav {
+    overflow-x: auto;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(86px, 1fr);
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .jumpNav a { padding: 9px 6px; }
+  .priorityStrip, .ticketGrid, .cardGrid, .cardGrid.two, .foodGrid, .fairGrid, .linkGrid, .sourceGrid, .rulesGrid {
+    grid-template-columns: 1fr;
+  }
+  .glassBox.wide { grid-column: span 1; }
+  .section { padding: 26px 0; }
+  .sectionHead { align-items: center; }
+  .sectionHead span { width: 34px; height: 34px; min-width: 34px; font-size: 0.85rem; }
+  .miniHead { display: block; }
+  .miniHead span { display: inline-flex; max-width: 100%; margin-top: 8px; text-align: left; }
+  .ticketCard, .simpleCard, .visualCard, .foodCard, .glassBox, .rulesGrid div { border-radius: 22px; padding: 16px; }
+  .rowLine { grid-template-columns: 1fr; gap: 2px; }
+  .floatingMap { right: 14px; bottom: 14px; padding: 12px 14px; }
+}
+
+@media (max-width: 420px) {
+  .heroBadges span, .chips span, .outLink, .filterRow button { font-size: 0.88rem; }
+  .tight, .zhLine, .simpleCard p, .visualCard p, .foodCard p, .rulesGrid p, details p { font-size: 0.98rem; }
+}
+`;
+
+export { DCSpotsInfrastructure };
+export default DCSpotsInfrastructure;
